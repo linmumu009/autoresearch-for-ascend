@@ -19,6 +19,8 @@ This project started from studying:
 
 - `karpathy/autoresearch`: the minimal autonomous research loop.
 - `Ascend/MindSpeed-MM`: Ascend ecosystem reference code and environment.
+- `Ascend/MindSpeed-LLM`: Ascend LLM training stack used for the current
+  Qwen3-0.6B acceleration-framework evaluation.
 
 The implementation here is not a direct fork of either repository. It is a
 small Ascend-specific prototype created to test whether the autoresearch loop
@@ -36,7 +38,10 @@ ascend_autoresearch/
   train.py        editable experiment file
   program.md      agent experiment protocol
   run_train.sh    Ascend environment launcher
+framework_adapters/
+  mindspeed_llm/  MindSpeed-LLM smoke/evaluation scripts
 docs/
+  framework_evaluation.md
   updates/        version update notes
 CHANGELOG.md      version history
 ```
@@ -57,6 +62,7 @@ is writable, model directories are read-only, and only one NPU device is exposed
 
 | Version | Date | Summary |
 | --- | --- | --- |
+| v0.2.0 | 2026-07-02 | Added MindSpeed-LLM adapter and framework evaluation notes for Qwen3-0.6B on Ascend 910C. |
 | v0.1.0 | 2026-07-02 | Initial Ascend Qwen3-0.6B autoresearch prototype, baseline and first gradient-accumulation search. |
 
 See [CHANGELOG.md](CHANGELOG.md) and [docs/updates](docs/updates) for details.
@@ -96,3 +102,14 @@ The first search varied only `GRAD_ACCUM_STEPS`.
 
 The current best is `b49232a`, a roughly 4.42% validation-loss improvement over
 the baseline in the 5-minute exploration budget.
+
+## Framework Evaluation Snapshot
+
+| Framework | Can run? | Efficiency | Effect |
+| --- | --- | --- | --- |
+| HF + torch_npu thin loop | Yes | 5-minute budget completes; best smoke used about 4.6 GB HBM on one visible NPU. | Best observed val_loss: `6.127654`. |
+| MindSpeed-LLM | Yes, 3-step full SFT smoke completed on Qwen3-0.6B. | Deepscaler smoke steady steps around 0.24-0.25 s after warmup; about 10.3 GB allocated HBM. | Deepscaler smoke train loss moved `1.0280 -> 0.6329`; comparable validation is still pending. |
+| MindSpeed-MM | Not selected for the first Qwen3-0.6B text-only path. | Not measured. | Not measured. |
+
+See [docs/framework_evaluation.md](docs/framework_evaluation.md) for the running
+decision log.

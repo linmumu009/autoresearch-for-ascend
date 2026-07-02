@@ -62,6 +62,7 @@ is writable, model directories are read-only, and only one NPU device is exposed
 
 | Version | Date | Summary |
 | --- | --- | --- |
+| v0.2.2 | 2026-07-02 | Added MindSpeed MCore-to-HF conversion and same-surface HF validation for converted checkpoints. |
 | v0.2.1 | 2026-07-02 | Added configurable MindSpeed-LLM validation split/eval knobs and recorded first validation-loss smoke. |
 | v0.2.0 | 2026-07-02 | Added MindSpeed-LLM adapter and framework evaluation notes for Qwen3-0.6B on Ascend 910C. |
 | v0.1.0 | 2026-07-02 | Initial Ascend Qwen3-0.6B autoresearch prototype, baseline and first gradient-accumulation search. |
@@ -109,7 +110,7 @@ the baseline in the 5-minute exploration budget.
 | Framework | Can run? | Efficiency | Effect |
 | --- | --- | --- | --- |
 | HF + torch_npu thin loop | Yes | 5-minute budget completes; best smoke used about 4.6 GB HBM on one visible NPU. | Best observed val_loss: `6.127654`. |
-| MindSpeed-LLM | Yes, full SFT smoke and validation smoke completed on Qwen3-0.6B. | Deepscaler smoke steady steps around 0.18-0.25 s after warmup; about 10.3 GB allocated HBM. | MindSpeed validation smoke reached loss `0.611867` on its held-out split; HF-comparable validation is still pending. |
+| MindSpeed-LLM | Yes, full SFT smoke, validation smoke, HF conversion, and HF eval completed. | Deepscaler smoke steady steps around 0.18-0.25 s after warmup; about 10.3 GB allocated HBM. | Converted 6-step checkpoint raw HF val_loss `14.963873` vs base `14.977717`; local SFT validation loss `0.611867`. |
 | MindSpeed-MM | Not selected for the first Qwen3-0.6B text-only path. | Not measured. | Not measured. |
 
 See [docs/framework_evaluation.md](docs/framework_evaluation.md) for the running

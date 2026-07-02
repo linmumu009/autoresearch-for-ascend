@@ -67,3 +67,23 @@ The first validation smoke used `DATA_SPLIT=90,10,0` and reached final
 validation-set loss `0.611867` after 6 train iterations. This is useful for
 MindSpeed-local comparisons, but still not directly comparable to the HF
 thin-loop validation loss.
+
+## HF Conversion
+
+Convert a saved MindSpeed/MCore checkpoint back to Hugging Face format:
+
+```bash
+bash /workspace/framework_adapters/mindspeed_llm/convert_mcore_to_hf.sh
+```
+
+Then evaluate it with the fixed raw next-token HF validation surface:
+
+```bash
+cd /workspace/ascend_autoresearch
+python evaluate_hf.py --model-path /workspace/outputs/mindspeed_qwen3_0p6_deepscaler_eval_smoke_hf
+```
+
+First converted-checkpoint result:
+
+- base Qwen3-0.6B raw HF val_loss: `14.977717`
+- converted MindSpeed 6-step checkpoint raw HF val_loss: `14.963873`

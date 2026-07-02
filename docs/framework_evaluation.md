@@ -20,7 +20,7 @@ our Ascend 910C environment. The scoring lens is intentionally practical:
 | Framework | Status | Efficiency Signal | Effect Signal | Notes |
 | --- | --- | --- | --- | --- |
 | HF + `torch_npu` thin loop | Runs | 5-minute budget completes on one NPU; about 4.6 GB HBM in observed runs. | Best val_loss `6.127654`. | This is the working baseline and the simplest autoresearch loop. |
-| MindSpeed-LLM | Runs | Deepscaler smoke steady steps around 0.18-0.25 s after warmup; about 10.3 GB allocated HBM. | Held-out validation smoke reached loss `0.611867`; strict HF-comparable validation still pending. | Best fit for Qwen3-0.6B text SFT among the Ascend frameworks inspected so far. |
+| MindSpeed-LLM | Runs | Deepscaler smoke steady steps around 0.18-0.25 s after warmup; about 10.3 GB allocated HBM. | Converted checkpoint raw HF val_loss `14.963873` vs base `14.977717`; held-out SFT validation loss `0.611867`. | Best fit for Qwen3-0.6B text SFT among the Ascend frameworks inspected so far. |
 | MindSpeed-MM | Deferred | Not measured | Not measured | Useful Ascend reference, but less direct for pure text Qwen3-0.6B SFT. |
 
 ## MindSpeed-LLM Notes
@@ -107,6 +107,35 @@ thin-loop `val_loss=6.127654`, because the two metrics are computed over
 different label surfaces. The next strict comparison should either convert the
 same validation records into both formats with equivalent labels, or convert
 MindSpeed checkpoints back to HF and run the existing `prepare.py` evaluator.
+
+## Converted Checkpoint HF Evaluation
+
+The first strict raw-validation bridge is now in place:
+
+1. Train Qwen3-0.6B with MindSpeed-LLM.
+2. Convert the MindSpeed/MCore checkpoint back to Hugging Face format.
+3. Evaluate the converted HF checkpoint with `ascend_autoresearch/evaluate_hf.py`.
+
+Run settings:
+
+- converted checkpoint:
+  `/workspace/outputs/mindspeed_qwen3_0p6_deepscaler_eval_smoke_hf`
+- validation surface: existing `prepare.py` raw next-token validation tokens
+- seq length: 512
+- batch size: 1
+
+Observed results:
+
+| Model | Raw HF Val Loss | Raw HF Val PPL | Eval Time | Peak HBM |
+| --- | ---: | ---: | ---: | ---: |
+| Base `/models/Qwen3-0.6B` | 14.977717 | 3196979.536 | 4.4 s | 2243.6 MB |
+| Converted MindSpeed 6-step checkpoint | 14.963873 | 3153024.804 | 4.3 s | 2243.6 MB |
+
+Interpretation: the effect is tiny but directionally positive on the raw HF
+validation surface. That is exactly the scale we should expect from a 6-step
+smoke. The important engineering result is the closed loop: MindSpeed training
+can now be evaluated by the same raw validation code used by the HF thin-loop
+prototype.
 
 ## 5-Minute Budget
 

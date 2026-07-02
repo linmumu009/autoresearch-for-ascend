@@ -1,5 +1,33 @@
 # Changelog
 
+## v0.2.2 - 2026-07-02
+
+Same-surface HF validation for converted MindSpeed checkpoints.
+
+### Added
+
+- Added `ascend_autoresearch/evaluate_hf.py` for eval-only HF raw next-token
+  validation using the fixed `prepare.py` data path.
+- Added `framework_adapters/mindspeed_llm/convert_mcore_to_hf.sh` to convert
+  MindSpeed/MCore checkpoints to Hugging Face format and copy required HF
+  config/tokenizer metadata.
+
+### Results
+
+- Converted `/workspace/outputs/mindspeed_qwen3_0p6_deepscaler_eval_smoke_ckpt`
+  to Hugging Face format.
+- Base Qwen3-0.6B raw HF validation loss: `14.977717`.
+- Converted MindSpeed 6-step checkpoint raw HF validation loss: `14.963873`.
+- Both eval runs used `seq_len=512`, `batch_size=1`, and the same
+  `prepare.py` validation tokens.
+
+### Notes
+
+- The improvement is intentionally tiny because the MindSpeed checkpoint only
+  trained for 6 micro steps on 512 deepscaler-derived SFT records.
+- This closes the first end-to-end comparison loop: MindSpeed train, convert to
+  HF, evaluate with the existing raw HF validation surface.
+
 ## v0.2.1 - 2026-07-02
 
 MindSpeed-LLM validation smoke setup.

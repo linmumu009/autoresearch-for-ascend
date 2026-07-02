@@ -1,0 +1,38 @@
+# Secrets and local login material
+ssh_config/
+*.pem
+*.key
+id_rsa*
+id_ed25519*
+
+# External reference repositories and downloaded source mirrors
+reference/
+
+# Runtime artifacts
+*.log
+*.out
+*.err
+results.tsv
+**/results.tsv
+__pycache__/
+*.pyc
+.pytest_cache/
+cache/
+outputs/
+ascend_autoresearch/cache/
+ascend_autoresearch/outputs/
+
+# Model/data artifacts
+*.safetensors
+*.bin
+*.pt
+*.pth
+*.ckpt
+*.parquet
+*.arrow
+
+# OS/editor noise
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/

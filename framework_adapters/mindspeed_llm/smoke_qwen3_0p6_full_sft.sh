@@ -25,6 +25,10 @@ MICRO_BATCH_SIZE="${MICRO_BATCH_SIZE:-1}"
 GLOBAL_BATCH_SIZE="${GLOBAL_BATCH_SIZE:-1}"
 SEQ_LENGTH="${SEQ_LENGTH:-2048}"
 TRAIN_ITERS="${TRAIN_ITERS:-3}"
+DATA_SPLIT="${DATA_SPLIT:-100,0,0}"
+EVAL_INTERVAL="${EVAL_INTERVAL:-${TRAIN_ITERS}}"
+EVAL_ITERS="${EVAL_ITERS:-0}"
+SAVE_INTERVAL="${SAVE_INTERVAL:-1000000}"
 
 mkdir -p "${CKPT_SAVE_DIR}/logs"
 
@@ -96,14 +100,14 @@ GPT_ARGS=(
 
 DATA_ARGS=(
   --data-path "${DATA_PATH}"
-  --split 100,0,0
+  --split "${DATA_SPLIT}"
 )
 
 OUTPUT_ARGS=(
   --log-interval 1
-  --save-interval 1000000
-  --eval-interval "${TRAIN_ITERS}"
-  --eval-iters 0
+  --save-interval "${SAVE_INTERVAL}"
+  --eval-interval "${EVAL_INTERVAL}"
+  --eval-iters "${EVAL_ITERS}"
   --log-throughput
 )
 

@@ -20,7 +20,7 @@ our Ascend 910C environment. The scoring lens is intentionally practical:
 | Framework | Status | Efficiency Signal | Effect Signal | Notes |
 | --- | --- | --- | --- | --- |
 | HF + `torch_npu` thin loop | Runs | 5-minute budget completes on one NPU; about 4.6 GB HBM in observed runs. | Best val_loss `6.127654`. | This is the working baseline and the simplest autoresearch loop. |
-| MindSpeed-LLM | Runs | Deepscaler smoke steady steps around 0.24-0.25 s after warmup; about 10.3 GB allocated HBM. | Deepscaler smoke train loss `1.0280 -> 0.6329`; strict validation still pending. | Best fit for Qwen3-0.6B text SFT among the Ascend frameworks inspected so far. |
+| MindSpeed-LLM | Runs | Deepscaler smoke steady steps around 0.18-0.25 s after warmup; about 10.3 GB allocated HBM. | Held-out validation smoke reached loss `0.611867`; strict HF-comparable validation still pending. | Best fit for Qwen3-0.6B text SFT among the Ascend frameworks inspected so far. |
 | MindSpeed-MM | Deferred | Not measured | Not measured | Useful Ascend reference, but less direct for pure text Qwen3-0.6B SFT. |
 
 ## MindSpeed-LLM Notes
@@ -73,6 +73,40 @@ efficiency signal is mixed but promising: it uses more memory than the thin HF
 loop because it builds full Megatron optimizer/checkpoint machinery, but the
 steady step time is low after startup. The effect signal is not yet comparable
 to the HF validation loss because this run logs training loss only.
+
+## MindSpeed-LLM Validation Smoke
+
+Run settings:
+
+- data: same 512 deepscaler-derived SFT records
+- split: `90,10,0`
+- steps: 6
+- eval interval: 3
+- eval iters: 2
+- global batch size: 1
+
+Observed train/eval output:
+
+| Iteration | Train Step Time | Train Loss | Validation Loss |
+| ---: | ---: | ---: | ---: |
+| 1 | 1703.7 ms | 0.939238 | - |
+| 2 | 237.8 ms | 1.102373 | - |
+| 3 | 240.9 ms | 0.616439 | 1.254728 |
+| 4 | 184.7 ms | 0.589018 | - |
+| 5 | 176.9 ms | 0.681547 | - |
+| 6 | 177.4 ms | 0.844050 | 0.691403 |
+
+The final validation-set pass after checkpoint save reported:
+
+- validation loss: `0.611867`
+- validation PPL: `1.843871`
+
+Interpretation: the MindSpeed path now has a repeatable held-out validation
+signal. It is still not a direct apples-to-apples comparison with the HF
+thin-loop `val_loss=6.127654`, because the two metrics are computed over
+different label surfaces. The next strict comparison should either convert the
+same validation records into both formats with equivalent labels, or convert
+MindSpeed checkpoints back to HF and run the existing `prepare.py` evaluator.
 
 ## 5-Minute Budget
 

@@ -1,5 +1,33 @@
 # Changelog
 
+## v0.2.1 - 2026-07-02
+
+MindSpeed-LLM validation smoke setup.
+
+### Changed
+
+- Made `framework_adapters/mindspeed_llm/smoke_qwen3_0p6_full_sft.sh`
+  configurable via `DATA_SPLIT`, `EVAL_INTERVAL`, `EVAL_ITERS`, and
+  `SAVE_INTERVAL`.
+- Updated framework evaluation notes with the first MindSpeed-LLM validation
+  loss run.
+
+### Results
+
+- Ran Qwen3-0.6B full SFT with `DATA_SPLIT=90,10,0`, `TRAIN_ITERS=6`,
+  `EVAL_INTERVAL=3`, and `EVAL_ITERS=2`.
+- Validation loss at iteration 3: `1.254728`.
+- Validation loss at iteration 6: `0.691403`.
+- Final validation-set loss after checkpoint save: `0.611867`.
+- Steady train step time after warmup was about `0.18-0.25s`.
+
+### Notes
+
+- This proves MindSpeed-LLM can produce a repeatable held-out validation signal.
+- The number is not directly comparable to the HF thin-loop `val_loss` yet,
+  because the MindSpeed run uses Alpaca-style SFT labels while the HF baseline
+  uses raw next-token validation text.
+
 ## v0.2.0 - 2026-07-02
 
 MindSpeed-LLM framework evaluation setup for Qwen3-0.6B on Ascend 910C.

@@ -27,6 +27,13 @@ TRAIN_ITERS=3 SEQ_LENGTH=2048 GLOBAL_BATCH_SIZE=1 \
   bash /workspace/framework_adapters/mindspeed_llm/smoke_qwen3_0p6_full_sft.sh
 ```
 
+For a held-out validation smoke:
+
+```bash
+TRAIN_ITERS=6 DATA_SPLIT=90,10,0 EVAL_INTERVAL=3 EVAL_ITERS=2 \
+  bash /workspace/framework_adapters/mindspeed_llm/smoke_qwen3_0p6_full_sft.sh
+```
+
 ## Default Paths
 
 - MindSpeed-LLM: `/workspace/reference/MindSpeed-LLM`
@@ -55,3 +62,8 @@ The deepscaler-derived 512-sample smoke completed 3 full-SFT iterations:
 This proves the path can run. It is not yet a strict effect comparison because
 the HF thin loop reports validation loss while this MindSpeed smoke currently
 reports training loss.
+
+The first validation smoke used `DATA_SPLIT=90,10,0` and reached final
+validation-set loss `0.611867` after 6 train iterations. This is useful for
+MindSpeed-local comparisons, but still not directly comparable to the HF
+thin-loop validation loss.

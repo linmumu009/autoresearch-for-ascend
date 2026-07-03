@@ -114,6 +114,8 @@ Initial search candidates:
 | `lr_low_6step.env` | `6.25e-7` | Test lower LR under the same 6-step budget. |
 | `lr_high_6step.env` | `2.5e-6` | Test higher LR under the same 6-step budget. |
 | `lr_higher_6step.env` | `5.0e-6` | Check whether the first high-LR gain continues or over-shoots. |
+| `lr_7p5em6_6step.env` | `7.5e-6` | Probe whether the higher-LR gain continues. |
+| `lr_1em5_6step.env` | `1.0e-5` | Upper LR probe before moving to longer budgets. |
 
 First LR search result:
 
@@ -123,5 +125,7 @@ First LR search result:
 | `lr_low_6step.env` | 14.975369 | 0.615938 |
 | `lr_high_6step.env` | 14.927566 | 0.590943 |
 | `lr_higher_6step.env` | 14.819130 | 0.532507 |
+| `lr_7p5em6_6step.env` | 14.622040 | 0.448289 |
+| `lr_1em5_6step.env` | 14.503275 | 0.408763 |
 
-Current best: `lr_higher_6step.env`.
+Current best: `lr_1em5_6step.env`.

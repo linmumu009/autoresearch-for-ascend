@@ -1,5 +1,34 @@
 # Changelog
 
+## v0.3.2 - 2026-07-03
+
+Extended the MindSpeed-LLM LR range search.
+
+### Added
+
+- Added `framework_adapters/mindspeed_llm/candidates/lr_7p5em6_6step.env`.
+- Added `framework_adapters/mindspeed_llm/candidates/lr_1em5_6step.env`.
+
+### Results
+
+Both candidates used the same 6-step runner loop, deepscaler-derived SFT data,
+MCore-to-HF conversion, and fixed raw HF validation.
+
+| Candidate | LR | Raw HF Val Loss | MindSpeed Valid Loss | Last Train Loss |
+| --- | ---: | ---: | ---: | ---: |
+| `lr_7p5em6_6step.env` | `7.5e-6` | `14.622040` | `0.448289` | `0.693946` |
+| `lr_1em5_6step.env` | `1.0e-5` | `14.503275` | `0.408763` | `0.643258` |
+
+### Notes
+
+- `LR=1.0e-5` is the current best 6-step MindSpeed candidate.
+- Compared with the runner baseline raw HF val_loss `14.962966`, the best
+  candidate improved by `0.459691`.
+- Compared with base Qwen3-0.6B raw HF val_loss `14.977717`, the best
+  candidate improved by `0.474442`.
+- Since the loss continued improving at `1.0e-5`, the next search should probe
+  the over-shoot boundary before increasing the training budget.
+
 ## v0.3.1 - 2026-07-03
 
 First MindSpeed-LLM LR search pass.

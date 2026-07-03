@@ -43,6 +43,7 @@ ascend_autoresearch/
 framework_adapters/
   mindspeed_llm/  MindSpeed-LLM smoke/evaluation scripts
     candidates/   versioned candidate env files
+  ms_swift_dpo/   ms-swift DPO LoRA/FSDP2 LR search runner
 docs/
   framework_evaluation.md
   updates/        version update notes
@@ -65,6 +66,7 @@ is writable, model directories are read-only, and only one NPU device is exposed
 
 | Version | Date | Summary |
 | --- | --- | --- |
+| v0.4.0 | 2026-07-04 | Added the ms-swift DPO LoRA/FSDP2 LR-search runner and found `2.0e-4` as the best 40-step holdout LR so far for Qwen3.6-27B. |
 | v0.3.18 | 2026-07-03 | Probed a wider `2.0e-4` 6-step bracket; new best raw HF val_loss is `11.678953`. |
 | v0.3.17 | 2026-07-03 | Probed `1.6e-4` on the 6-step boundary; new best raw HF val_loss is `11.906736`. |
 | v0.3.16 | 2026-07-03 | Probed `1.5e-4` on the 6-step boundary; new best raw HF val_loss is `11.958964`. |
@@ -133,6 +135,7 @@ the baseline in the 5-minute exploration budget.
 | --- | --- | --- | --- |
 | HF + torch_npu thin loop | Yes | 5-minute budget completes; best smoke used about 4.6 GB HBM on one visible NPU. | Best observed val_loss: `6.127654`. |
 | MindSpeed-LLM | Yes, autoresearch runner completed train -> convert -> HF eval -> TSV record. | Deepscaler smoke steady steps around 0.18-0.25 s after warmup; about 10.3 GB allocated HBM. | Best observed raw HF val_loss `11.678953` at `LR=2.0e-4`, 6 steps; base Qwen3 raw HF val_loss `14.977717`. |
+| ms-swift DPO LoRA/FSDP2 | Yes, Qwen3.6-27B DPO + LoRA + FSDP2 runs. | 8 NPUs; 40-step + 10% eval runs took about 2m47s-2m55s, with 0.229-0.239 train steps/s and about 51.2-51.9 GiB HBM per NPU. | Current best 40-step holdout LR is `2.0e-4`: eval_loss `1.2e-7`, eval margin `17.98`. |
 | MindSpeed-MM | Not selected for the first Qwen3-0.6B text-only path. | Not measured. | Not measured. |
 
 See [docs/framework_evaluation.md](docs/framework_evaluation.md) for the running

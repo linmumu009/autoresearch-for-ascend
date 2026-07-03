@@ -1,5 +1,41 @@
 # Changelog
 
+## v0.4.0 - 2026-07-04
+
+Added the first ms-swift DPO LoRA/FSDP2 learning-rate search runner for
+Qwen3.6-27B on the existing `llin-rl-dpo` Ascend runtime.
+
+### Added
+
+- Added `framework_adapters/ms_swift_dpo/run_lr_candidate.sh`.
+- Added configurable `SPLIT_DATASET_RATIO`, `EVAL_STRATEGY`, and `EVAL_STEPS`
+  controls for short-budget DPO holdout checks.
+
+### Results
+
+All runs used Qwen3.6-27B, DPO, LoRA rank 8 / alpha 32, FSDP2 full shard,
+8 NPUs, `max_length=512`, cosine LR schedule, no warmup, and 10% holdout for
+the 40-step confirmation runs.
+
+| LR | Steps | Eval Loss | Eval Margin | Eval Chosen | Eval Rejected | Train Steps/s |
+| ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| `2.0e-4` | 40 | `1.2e-7` | `17.98` | `5.09` | `-12.88` | `0.236` |
+| `3.0e-4` | 40 | `4.1e-7` | `17.29` | `4.69` | `-12.58` | `0.231` |
+| `2.5e-4` | 40 | `4.2e-7` | `17.16` | `4.58` | `-12.57` | `0.230` |
+| `1.5e-4` | 40 | `5.6e-7` | `16.24` | `6.25` | `-10.01` | `0.229` |
+| `4.0e-4` | 40 | `8.2e-7` | `16.75` | `3.86` | `-12.92` | `0.233` |
+| `1.0e-4` | 40 | `2.84e-6` | `14.71` | `6.80` | `-7.92` | `0.239` |
+
+### Notes
+
+- The current best LR is `2.0e-4` on the 40-step holdout surface.
+- Higher rates still run stably, but `4.0e-4` starts to lower chosen rewards
+  while not improving holdout loss, so it looks like the first over-aggressive
+  region for this short-budget setup.
+- This is a DPO preference-training search, not SFT/PPO/DPO-vs-PPO model
+  quality proof. A longer confirmation run and downstream generation checks are
+  still needed before calling it final.
+
 ## v0.3.18 - 2026-07-03
 
 Used a wider 6-step LR bracket probe at `2.0e-4`.

@@ -40,6 +40,7 @@ ascend_autoresearch/
 framework_adapters/
   mindspeed_llm/  MindSpeed-LLM smoke/评估脚本
     candidates/   版本化候选 env 配置
+  ms_swift_dpo/   ms-swift DPO LoRA/FSDP2 学习率搜索 runner
 docs/
   framework_evaluation.md
   updates/        每个版本的更新说明
@@ -62,6 +63,7 @@ NPU 设备，避免影响物理机和其他容器。
 
 | 版本 | 日期 | 摘要 |
 | --- | --- | --- |
+| v0.4.0 | 2026-07-04 | 新增 ms-swift DPO LoRA/FSDP2 学习率搜索 runner，并在 Qwen3.6-27B 的 40-step holdout 实验中暂定 `2.0e-4` 为当前最佳。 |
 | v0.3.18 | 2026-07-03 | 用 6-step 做更大跳步 `2.0e-4` bracket；新的最佳 raw HF val_loss 是 `11.678953`。 |
 | v0.3.17 | 2026-07-03 | 用 6-step 探测 `1.6e-4` 边界；新的最佳 raw HF val_loss 是 `11.906736`。 |
 | v0.3.16 | 2026-07-03 | 用 6-step 探测 `1.5e-4` 边界；新的最佳 raw HF val_loss 是 `11.958964`。 |
@@ -130,6 +132,7 @@ validation loss 约改善 4.42%。
 | --- | --- | --- | --- |
 | HF + torch_npu thin loop | 能 | 5 分钟预算可完成；观测到单 NPU 约 4.6 GB HBM。 | 最佳 val_loss：`6.127654`。 |
 | MindSpeed-LLM | 能，已经跑通 train -> convert -> HF eval -> TSV record。 | Deepscaler smoke 热身后单步约 0.18-0.25 s；分配 HBM 约 10.3 GB。 | 当前最佳 raw HF val_loss 为 `11.678953`，对应 `LR=2.0e-4`、6 steps；base Qwen3 raw HF val_loss 为 `14.977717`。 |
+| ms-swift DPO LoRA/FSDP2 | 能，已经跑通 Qwen3.6-27B DPO + LoRA + FSDP2。 | 8 NPU；40-step + 10% eval 约 2m47s-2m55s，训练速度约 0.229-0.239 steps/s，单卡 HBM 约 51.2-51.9 GiB。 | 当前 40-step holdout 最佳 LR 是 `2.0e-4`：eval_loss `1.2e-7`，eval margin `17.98`。 |
 | MindSpeed-MM | 暂未作为 Qwen3-0.6B 纯文本路径首选。 | 未测。 | 未测。 |
 
 持续评估记录见 [docs/framework_evaluation.md](docs/framework_evaluation.md)。

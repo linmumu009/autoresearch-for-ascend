@@ -171,6 +171,29 @@ The same runner invocation also evaluated the base model at raw HF val_loss
 `14.977717`, so the baseline candidate is directionally positive on the fixed
 HF validation surface.
 
+## First LR Search
+
+The first actual MindSpeed autoresearch search pass varied only learning rate
+while keeping the runner loop fixed:
+
+- training: 6 MindSpeed-LLM full-SFT iterations
+- data: 512 deepscaler-derived Alpaca-style SFT records
+- conversion: MindSpeed/MCore to Hugging Face
+- evaluation: fixed raw HF validation via `evaluate_hf.py`
+
+| Candidate | LR | Raw HF Val Loss | Raw HF Val PPL | MindSpeed Valid Loss | Last Train Loss |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| `baseline_6step` | `1.25e-6` | 14.962966 | 3150167.515 | 0.612093 | 0.844955 |
+| `lr_low_6step` | `6.25e-7` | 14.975369 | 3189481.816 | 0.615938 | 0.847379 |
+| `lr_high_6step` | `2.5e-6` | 14.927566 | 3040603.000 | 0.590943 | 0.826132 |
+| `lr_higher_6step` | `5.0e-6` | 14.819130 | 2728138.084 | 0.532507 | 0.772222 |
+
+Interpretation: lower LR was worse, and higher LR helped under this tiny 6-step
+budget. The current best candidate is `lr_higher_6step`. The next sensible
+search should test whether the improvement continues or over-shoots around
+`7.5e-6` to `1.0e-5`, then move to longer budgets once the LR range is less
+blurry.
+
 ## 5-Minute Budget
 
 Karpathy's original 5-minute loop is still valuable as the outer research

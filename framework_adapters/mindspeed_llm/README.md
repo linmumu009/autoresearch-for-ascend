@@ -105,3 +105,23 @@ The runner does four things in order:
 4. append metrics to `/workspace/runs/mindspeed_llm/results.tsv`.
 
 Each candidate gets its own directory under `/workspace/runs/mindspeed_llm/`.
+
+Initial search candidates:
+
+| Candidate | LR | Purpose |
+| --- | ---: | --- |
+| `baseline_6step.env` | `1.25e-6` | Runner baseline. |
+| `lr_low_6step.env` | `6.25e-7` | Test lower LR under the same 6-step budget. |
+| `lr_high_6step.env` | `2.5e-6` | Test higher LR under the same 6-step budget. |
+| `lr_higher_6step.env` | `5.0e-6` | Check whether the first high-LR gain continues or over-shoots. |
+
+First LR search result:
+
+| Candidate | Raw HF Val Loss | MindSpeed Valid Loss |
+| --- | ---: | ---: |
+| `baseline_6step.env` | 14.962966 | 0.612093 |
+| `lr_low_6step.env` | 14.975369 | 0.615938 |
+| `lr_high_6step.env` | 14.927566 | 0.590943 |
+| `lr_higher_6step.env` | 14.819130 | 0.532507 |
+
+Current best: `lr_higher_6step.env`.

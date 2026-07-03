@@ -63,6 +63,7 @@ is writable, model directories are read-only, and only one NPU device is exposed
 
 | Version | Date | Summary |
 | --- | --- | --- |
+| v0.3.1 | 2026-07-03 | Added first MindSpeed-LLM LR search candidates and recorded `5.0e-6` as best 6-step result. |
 | v0.3.0 | 2026-07-03 | Added and validated MindSpeed-LLM autoresearch candidate runner with train-convert-evaluate-record loop. |
 | v0.2.2 | 2026-07-02 | Added MindSpeed MCore-to-HF conversion and same-surface HF validation for converted checkpoints. |
 | v0.2.1 | 2026-07-02 | Added configurable MindSpeed-LLM validation split/eval knobs and recorded first validation-loss smoke. |
@@ -112,7 +113,7 @@ the baseline in the 5-minute exploration budget.
 | Framework | Can run? | Efficiency | Effect |
 | --- | --- | --- | --- |
 | HF + torch_npu thin loop | Yes | 5-minute budget completes; best smoke used about 4.6 GB HBM on one visible NPU. | Best observed val_loss: `6.127654`. |
-| MindSpeed-LLM | Yes, autoresearch runner completed train -> convert -> HF eval -> TSV record. | Deepscaler smoke steady steps around 0.18-0.25 s after warmup; about 10.3 GB allocated HBM. | Runner baseline raw HF val_loss `14.962966` vs base `14.977717`; local SFT validation loss `0.612093`. |
+| MindSpeed-LLM | Yes, autoresearch runner completed train -> convert -> HF eval -> TSV record. | Deepscaler smoke steady steps around 0.18-0.25 s after warmup; about 10.3 GB allocated HBM. | First LR search best raw HF val_loss `14.819130` at `LR=5.0e-6`; base Qwen3 raw HF val_loss `14.977717`. |
 | MindSpeed-MM | Not selected for the first Qwen3-0.6B text-only path. | Not measured. | Not measured. |
 
 See [docs/framework_evaluation.md](docs/framework_evaluation.md) for the running
@@ -136,3 +137,6 @@ First runner baseline result:
 | Run | Raw HF Val Loss | MindSpeed Valid Loss | Last Train Loss |
 | --- | ---: | ---: | ---: |
 | `mindspeed_qwen3_0p6_baseline_6step` | 14.962966 | 0.612093 | 0.844955 |
+| `mindspeed_qwen3_0p6_lr_low_6step` | 14.975369 | 0.615938 | 0.847379 |
+| `mindspeed_qwen3_0p6_lr_high_6step` | 14.927566 | 0.590943 | 0.826132 |
+| `mindspeed_qwen3_0p6_lr_higher_6step` | 14.819130 | 0.532507 | 0.772222 |

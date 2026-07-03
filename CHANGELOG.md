@@ -1,5 +1,34 @@
 # Changelog
 
+## v0.3.1 - 2026-07-03
+
+First MindSpeed-LLM LR search pass.
+
+### Added
+
+- Added `framework_adapters/mindspeed_llm/candidates/lr_low_6step.env`.
+- Added `framework_adapters/mindspeed_llm/candidates/lr_high_6step.env`.
+- Added `framework_adapters/mindspeed_llm/candidates/lr_higher_6step.env`.
+
+### Results
+
+All candidates used the same 6-step runner loop, deepscaler-derived SFT data,
+MCore-to-HF conversion, and fixed raw HF validation.
+
+| Candidate | LR | Raw HF Val Loss | MindSpeed Valid Loss | Last Train Loss |
+| --- | ---: | ---: | ---: | ---: |
+| baseline | `1.25e-6` | `14.962966` | `0.612093` | `0.844955` |
+| low | `6.25e-7` | `14.975369` | `0.615938` | `0.847379` |
+| high | `2.5e-6` | `14.927566` | `0.590943` | `0.826132` |
+| higher | `5.0e-6` | `14.819130` | `0.532507` | `0.772222` |
+
+### Notes
+
+- `LR=5.0e-6` is the best result in this first pass.
+- Compared with the runner baseline, raw HF val_loss improved by `0.143836`.
+- Compared with base Qwen3-0.6B raw HF val_loss `14.977717`, the best
+  candidate improved by `0.158587`.
+
 ## v0.3.0 - 2026-07-03
 
 MindSpeed-LLM autoresearch candidate runner.

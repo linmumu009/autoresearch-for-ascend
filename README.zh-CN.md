@@ -62,6 +62,7 @@ NPU 设备，避免影响物理机和其他容器。
 
 | 版本 | 日期 | 摘要 |
 | --- | --- | --- |
+| v0.3.18 | 2026-07-03 | 用 6-step 做更大跳步 `2.0e-4` bracket；新的最佳 raw HF val_loss 是 `11.678953`。 |
 | v0.3.17 | 2026-07-03 | 用 6-step 探测 `1.6e-4` 边界；新的最佳 raw HF val_loss 是 `11.906736`。 |
 | v0.3.16 | 2026-07-03 | 用 6-step 探测 `1.5e-4` 边界；新的最佳 raw HF val_loss 是 `11.958964`。 |
 | v0.3.15 | 2026-07-03 | 用 6-step 探测 `1.4e-4` 边界；新的最佳 raw HF val_loss 是 `12.018144`，但收益明显变小。 |
@@ -128,7 +129,7 @@ validation loss 约改善 4.42%。
 | 框架 | 能否跑通 | 效率 | 效果 |
 | --- | --- | --- | --- |
 | HF + torch_npu thin loop | 能 | 5 分钟预算可完成；观测到单 NPU 约 4.6 GB HBM。 | 最佳 val_loss：`6.127654`。 |
-| MindSpeed-LLM | 能，已经跑通 train -> convert -> HF eval -> TSV record。 | Deepscaler smoke 热身后单步约 0.18-0.25 s；分配 HBM 约 10.3 GB。 | 当前最佳 raw HF val_loss 为 `11.906736`，对应 `LR=1.6e-4`、6 steps；base Qwen3 raw HF val_loss 为 `14.977717`。 |
+| MindSpeed-LLM | 能，已经跑通 train -> convert -> HF eval -> TSV record。 | Deepscaler smoke 热身后单步约 0.18-0.25 s；分配 HBM 约 10.3 GB。 | 当前最佳 raw HF val_loss 为 `11.678953`，对应 `LR=2.0e-4`、6 steps；base Qwen3 raw HF val_loss 为 `14.977717`。 |
 | MindSpeed-MM | 暂未作为 Qwen3-0.6B 纯文本路径首选。 | 未测。 | 未测。 |
 
 持续评估记录见 [docs/framework_evaluation.md](docs/framework_evaluation.md)。
@@ -176,7 +177,8 @@ CANDIDATE_ENV=/workspace/framework_adapters/mindspeed_llm/candidates/baseline_6s
 | `mindspeed_qwen3_0p6_lr_1p4em4_6step` | 12.018144 | 0.460213 | 0.667446 |
 | `mindspeed_qwen3_0p6_lr_1p5em4_6step` | 11.958964 | 0.471812 | 0.688767 |
 | `mindspeed_qwen3_0p6_lr_1p6em4_6step` | 11.906736 | 0.489890 | 0.703591 |
+| `mindspeed_qwen3_0p6_lr_2em4_6step` | 11.678953 | 0.588330 | 0.789087 |
 
-当前观测到的 MindSpeed 最佳：`lr_1p6em4_6step.env`。在同一个固定 HF 验证脚本下，
-它相比 runner baseline 的 raw HF validation loss 改善 `3.056230`，相比 base
-Qwen3-0.6B 改善 `3.070981`。
+当前观测到的 MindSpeed 最佳：`lr_2em4_6step.env`。在同一个固定 HF 验证脚本下，
+它相比 runner baseline 的 raw HF validation loss 改善 `3.284013`，相比 base
+Qwen3-0.6B 改善 `3.298764`。

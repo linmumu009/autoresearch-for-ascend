@@ -1,5 +1,30 @@
 # Changelog
 
+## v0.3.18 - 2026-07-03
+
+Used a wider 6-step LR bracket probe at `2.0e-4`.
+
+### Added
+
+- Added `framework_adapters/mindspeed_llm/candidates/lr_2em4_6step.env`.
+
+### Results
+
+| Candidate | LR | Steps | Raw HF Val Loss | MindSpeed Valid Loss | Last Train Loss |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| `lr_2em4_6step.env` | `2.0e-4` | 6 | `11.678953` | `0.588330` | `0.789087` |
+
+### Notes
+
+- `LR=2.0e-4` improved raw HF val_loss by `0.227783` over `1.6e-4`, so the
+  wider bracket did not over-shoot.
+- MindSpeed-local validation and train loss are now much higher, so the 6-step
+  optimum remains a short-budget signal only.
+- Compared with runner baseline raw HF val_loss `14.962966`, the current best
+  candidate improved by `3.284013`.
+- Compared with base Qwen3-0.6B raw HF val_loss `14.977717`, the current best
+  candidate improved by `3.298764`.
+
 ## v0.3.17 - 2026-07-03
 
 Continued the 6-step LR boundary search at `1.6e-4`.

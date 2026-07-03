@@ -1,5 +1,37 @@
 # Changelog
 
+## v0.3.0 - 2026-07-03
+
+MindSpeed-LLM autoresearch candidate runner.
+
+### Added
+
+- Added `framework_adapters/mindspeed_llm/run_autoresearch_candidate.sh`.
+- Added `framework_adapters/mindspeed_llm/candidates/baseline_6step.env`.
+- Documented the train -> convert -> fixed HF eval -> TSV record loop.
+
+### Changed
+
+- Made the MindSpeed training script honor the `LR` environment variable so
+  learning-rate candidates are real experiments.
+
+### Intent
+
+- Move from one-off smoke commands to repeatable autoresearch candidates.
+- Keep every candidate in its own run directory under
+  `/workspace/runs/mindspeed_llm/`.
+- Use `ascend_autoresearch/evaluate_hf.py` as the raw validation gate.
+
+### Results
+
+- Validated the baseline candidate end-to-end in `llin-autoresearch`.
+- Runner output path:
+  `/workspace/runs/mindspeed_llm/mindspeed_qwen3_0p6_baseline_6step/`.
+- Converted checkpoint raw HF validation loss: `14.962966`.
+- Base Qwen3-0.6B raw HF validation loss from the same run: `14.977717`.
+- MindSpeed held-out validation loss: `0.612093`.
+- Last MindSpeed train loss: `0.844955`.
+
 ## v0.2.2 - 2026-07-02
 
 Same-surface HF validation for converted MindSpeed checkpoints.

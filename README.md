@@ -40,6 +40,7 @@ ascend_autoresearch/
   run_train.sh    Ascend environment launcher
 framework_adapters/
   mindspeed_llm/  MindSpeed-LLM smoke/evaluation scripts
+    candidates/   versioned candidate env files
 docs/
   framework_evaluation.md
   updates/        version update notes
@@ -62,6 +63,7 @@ is writable, model directories are read-only, and only one NPU device is exposed
 
 | Version | Date | Summary |
 | --- | --- | --- |
+| v0.3.0 | 2026-07-03 | Added and validated MindSpeed-LLM autoresearch candidate runner with train-convert-evaluate-record loop. |
 | v0.2.2 | 2026-07-02 | Added MindSpeed MCore-to-HF conversion and same-surface HF validation for converted checkpoints. |
 | v0.2.1 | 2026-07-02 | Added configurable MindSpeed-LLM validation split/eval knobs and recorded first validation-loss smoke. |
 | v0.2.0 | 2026-07-02 | Added MindSpeed-LLM adapter and framework evaluation notes for Qwen3-0.6B on Ascend 910C. |
@@ -110,8 +112,27 @@ the baseline in the 5-minute exploration budget.
 | Framework | Can run? | Efficiency | Effect |
 | --- | --- | --- | --- |
 | HF + torch_npu thin loop | Yes | 5-minute budget completes; best smoke used about 4.6 GB HBM on one visible NPU. | Best observed val_loss: `6.127654`. |
-| MindSpeed-LLM | Yes, full SFT smoke, validation smoke, HF conversion, and HF eval completed. | Deepscaler smoke steady steps around 0.18-0.25 s after warmup; about 10.3 GB allocated HBM. | Converted 6-step checkpoint raw HF val_loss `14.963873` vs base `14.977717`; local SFT validation loss `0.611867`. |
+| MindSpeed-LLM | Yes, autoresearch runner completed train -> convert -> HF eval -> TSV record. | Deepscaler smoke steady steps around 0.18-0.25 s after warmup; about 10.3 GB allocated HBM. | Runner baseline raw HF val_loss `14.962966` vs base `14.977717`; local SFT validation loss `0.612093`. |
 | MindSpeed-MM | Not selected for the first Qwen3-0.6B text-only path. | Not measured. | Not measured. |
 
 See [docs/framework_evaluation.md](docs/framework_evaluation.md) for the running
 decision log.
+
+## MindSpeed Autoresearch Loop
+
+The first MindSpeed runner executes one complete candidate loop:
+
+```bash
+CANDIDATE_ENV=/workspace/framework_adapters/mindspeed_llm/candidates/baseline_6step.env \
+  bash /workspace/framework_adapters/mindspeed_llm/run_autoresearch_candidate.sh
+```
+
+It trains a MindSpeed candidate, converts the checkpoint to Hugging Face format,
+evaluates it with the fixed raw HF validation script, and appends metrics to
+`/workspace/runs/mindspeed_llm/results.tsv`.
+
+First runner baseline result:
+
+| Run | Raw HF Val Loss | MindSpeed Valid Loss | Last Train Loss |
+| --- | ---: | ---: | ---: |
+| `mindspeed_qwen3_0p6_baseline_6step` | 14.962966 | 0.612093 | 0.844955 |

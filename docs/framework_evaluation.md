@@ -137,6 +137,40 @@ smoke. The important engineering result is the closed loop: MindSpeed training
 can now be evaluated by the same raw validation code used by the HF thin-loop
 prototype.
 
+## Autoresearch Runner
+
+The v0.3.0 runner turns the manual sequence into a repeatable candidate loop:
+
+1. train a MindSpeed-LLM candidate,
+2. convert its MCore checkpoint to Hugging Face format,
+3. evaluate the converted checkpoint with the fixed raw HF validation script,
+4. append metrics to a TSV file.
+
+Default output layout:
+
+```text
+/workspace/runs/mindspeed_llm/
+  results.tsv
+  <run_name>/
+    mcore/
+    hf/
+    logs/
+```
+
+This is the first practical bridge to Karpathy-style autoresearch on Ascend:
+agents can now vary a small candidate env file, run the same loop, and compare
+raw HF validation loss before deciding whether to keep the change.
+
+Validated baseline candidate:
+
+| Run | Raw HF Val Loss | Raw HF Val PPL | MindSpeed Valid Loss | Last Train Loss |
+| --- | ---: | ---: | ---: | ---: |
+| `mindspeed_qwen3_0p6_baseline_6step` | 14.962966 | 3150167.515 | 0.612093 | 0.844955 |
+
+The same runner invocation also evaluated the base model at raw HF val_loss
+`14.977717`, so the baseline candidate is directionally positive on the fixed
+HF validation surface.
+
 ## 5-Minute Budget
 
 Karpathy's original 5-minute loop is still valuable as the outer research

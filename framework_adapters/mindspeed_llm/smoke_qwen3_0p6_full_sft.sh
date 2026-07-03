@@ -29,6 +29,7 @@ DATA_SPLIT="${DATA_SPLIT:-100,0,0}"
 EVAL_INTERVAL="${EVAL_INTERVAL:-${TRAIN_ITERS}}"
 EVAL_ITERS="${EVAL_ITERS:-0}"
 SAVE_INTERVAL="${SAVE_INTERVAL:-1000000}"
+LR="${LR:-1.25e-6}"
 
 mkdir -p "${CKPT_SAVE_DIR}/logs"
 
@@ -95,7 +96,7 @@ GPT_ARGS=(
   --adam-beta2 0.95
   --no-load-optim
   --no-load-rng
-  --lr 1.25e-6
+  --lr "${LR}"
 )
 
 DATA_ARGS=(

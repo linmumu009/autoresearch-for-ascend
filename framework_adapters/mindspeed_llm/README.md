@@ -87,3 +87,21 @@ First converted-checkpoint result:
 
 - base Qwen3-0.6B raw HF val_loss: `14.977717`
 - converted MindSpeed 6-step checkpoint raw HF val_loss: `14.963873`
+
+## Autoresearch Runner
+
+Run one full candidate loop:
+
+```bash
+CANDIDATE_ENV=/workspace/framework_adapters/mindspeed_llm/candidates/baseline_6step.env \
+  bash /workspace/framework_adapters/mindspeed_llm/run_autoresearch_candidate.sh
+```
+
+The runner does four things in order:
+
+1. train a MindSpeed-LLM candidate,
+2. convert the MCore checkpoint to Hugging Face format,
+3. evaluate the converted checkpoint with `ascend_autoresearch/evaluate_hf.py`,
+4. append metrics to `/workspace/runs/mindspeed_llm/results.tsv`.
+
+Each candidate gets its own directory under `/workspace/runs/mindspeed_llm/`.

@@ -1,5 +1,36 @@
 # Changelog
 
+## v0.3.7 - 2026-07-03
+
+Verified `5.0e-5` under the 12-step budget and continued the 6-step LR boundary
+search at `6.0e-5`.
+
+### Added
+
+- Added `framework_adapters/mindspeed_llm/candidates/lr_5em5_12step.env`.
+- Added `framework_adapters/mindspeed_llm/candidates/lr_6em5_6step.env`.
+
+### Results
+
+Both candidates used the same train -> MCore-to-HF conversion -> fixed raw HF
+validation runner.
+
+| Candidate | LR | Steps | Raw HF Val Loss | MindSpeed Valid Loss | Last Train Loss |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| `lr_5em5_12step.env` | `5.0e-5` | 12 | `12.686586` | `0.349943` | `0.516511` |
+| `lr_6em5_6step.env` | `6.0e-5` | 6 | `12.540532` | `0.347458` | `0.555464` |
+
+### Notes
+
+- `LR=5.0e-5` is worse than `4.0e-5` under the 12-step budget, so the 12-step
+  over-shoot boundary likely sits between `4.0e-5` and `5.0e-5`.
+- `LR=6.0e-5` still improves the 6-step raw HF validation surface and is the
+  best observed candidate so far.
+- Compared with runner baseline raw HF val_loss `14.962966`, the current best
+  candidate improved by `2.422434`.
+- Compared with base Qwen3-0.6B raw HF val_loss `14.977717`, the current best
+  candidate improved by `2.437185`.
+
 ## v0.3.6 - 2026-07-03
 
 Verified `4.0e-5` under the 12-step budget and continued the 6-step LR boundary

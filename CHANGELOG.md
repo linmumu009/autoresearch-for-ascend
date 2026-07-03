@@ -1,5 +1,28 @@
 # Changelog
 
+## v0.3.9 - 2026-07-03
+
+Continued the 6-step LR boundary search at `8.0e-5`.
+
+### Added
+
+- Added `framework_adapters/mindspeed_llm/candidates/lr_8em5_6step.env`.
+
+### Results
+
+| Candidate | LR | Steps | Raw HF Val Loss | MindSpeed Valid Loss | Last Train Loss |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| `lr_8em5_6step.env` | `8.0e-5` | 6 | `12.434883` | `0.372704` | `0.590512` |
+
+### Notes
+
+- `LR=8.0e-5` still improves the 6-step raw HF validation surface, but the gain
+  over `7.0e-5` is now small.
+- Compared with runner baseline raw HF val_loss `14.962966`, the current best
+  candidate improved by `2.528083`.
+- Compared with base Qwen3-0.6B raw HF val_loss `14.977717`, the current best
+  candidate improved by `2.542834`.
+
 ## v0.3.8 - 2026-07-03
 
 Refined the 12-step LR boundary and continued the 6-step LR boundary search at

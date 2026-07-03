@@ -1,5 +1,30 @@
 # Changelog
 
+## v0.3.16 - 2026-07-03
+
+Continued the 6-step LR boundary search at `1.5e-4`.
+
+### Added
+
+- Added `framework_adapters/mindspeed_llm/candidates/lr_1p5em4_6step.env`.
+
+### Results
+
+| Candidate | LR | Steps | Raw HF Val Loss | MindSpeed Valid Loss | Last Train Loss |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| `lr_1p5em4_6step.env` | `1.5e-4` | 6 | `11.958964` | `0.471812` | `0.688767` |
+
+### Notes
+
+- `LR=1.5e-4` improved raw HF val_loss by `0.059180` over `1.4e-4`, so the
+  short-budget over-shoot point is still not bracketed.
+- MindSpeed-local validation and train loss continue rising, preserving the
+  need for longer-budget confirmation after the boundary search.
+- Compared with runner baseline raw HF val_loss `14.962966`, the current best
+  candidate improved by `3.004002`.
+- Compared with base Qwen3-0.6B raw HF val_loss `14.977717`, the current best
+  candidate improved by `3.018753`.
+
 ## v0.3.15 - 2026-07-03
 
 Continued the 6-step LR boundary search at `1.4e-4`.

@@ -20,7 +20,7 @@ our Ascend 910C environment. The scoring lens is intentionally practical:
 | Framework | Status | Efficiency Signal | Effect Signal | Notes |
 | --- | --- | --- | --- | --- |
 | HF + `torch_npu` thin loop | Runs | 5-minute budget completes on one NPU; about 4.6 GB HBM in observed runs. | Best val_loss `6.127654`. | This is the working baseline and the simplest autoresearch loop. |
-| MindSpeed-LLM | Runs | Deepscaler smoke steady steps around 0.18-0.25 s after warmup; about 10.3 GB allocated HBM. | Best observed converted checkpoint raw HF val_loss `12.018144` vs base `14.977717`. | Best fit for Qwen3-0.6B text SFT among the Ascend frameworks inspected so far. |
+| MindSpeed-LLM | Runs | Deepscaler smoke steady steps around 0.18-0.25 s after warmup; about 10.3 GB allocated HBM. | Best observed converted checkpoint raw HF val_loss `11.958964` vs base `14.977717`. | Best fit for Qwen3-0.6B text SFT among the Ascend frameworks inspected so far. |
 | MindSpeed-MM | Deferred | Not measured | Not measured | Useful Ascend reference, but less direct for pure text Qwen3-0.6B SFT. |
 
 ## MindSpeed-LLM Notes
@@ -208,15 +208,16 @@ while keeping the runner loop fixed:
 | `lr_1p2em4_6step` | `1.2e-4` | 12.152827 | 189629.485 | 0.431454 | 0.644243 |
 | `lr_1p3em4_6step` | `1.3e-4` | 12.037202 | 168923.703 | 0.446334 | 0.656360 |
 | `lr_1p4em4_6step` | `1.4e-4` | 12.018144 | 165734.840 | 0.460213 | 0.667446 |
+| `lr_1p5em4_6step` | `1.5e-4` | 11.958964 | 156211.134 | 0.471812 | 0.688767 |
 
 Interpretation: lower LR was worse, and higher LR helped under this tiny 6-step
-budget. The 6-step gain continued through `1.4e-4`, but the latest gain is much
-smaller than the previous probes. MindSpeed-local valid/train loss is still
-rising, so the short-budget optimum has not yet proven safe for longer training.
-Under the same 12-step budget, both `4.5e-5` and `5.0e-5` are worse than
-`4.0e-5`, so the longer-budget local best among tested candidates remains
-`4.0e-5`. The next choice is to probe `1.5e-4` on 6 steps to see whether the
-short-budget over-shoot point is just above `1.4e-4`.
+budget. The 6-step gain continued through `1.5e-4`; the `1.4e-4` slowdown did
+not yet mark the boundary. MindSpeed-local valid/train loss is still rising, so
+the short-budget optimum has not yet proven safe for longer training. Under the
+same 12-step budget, both `4.5e-5` and `5.0e-5` are worse than `4.0e-5`, so the
+longer-budget local best among tested candidates remains `4.0e-5`. The next
+choice is to probe `1.6e-4` on 6 steps, then stop the upward search as soon as
+raw-HF loss worsens and confirm the best bracket under a longer budget.
 
 ## 5-Minute Budget
 

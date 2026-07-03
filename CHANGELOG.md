@@ -1,5 +1,29 @@
 # Changelog
 
+## v0.4.1 - 2026-07-04
+
+Confirmed the current ms-swift DPO learning-rate winner with a longer
+100-step holdout run.
+
+### Results
+
+| LR | Steps | Eval Step | Eval Loss | Eval Margin | Eval Chosen | Eval Rejected | Train Loss | Runtime |
+| ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| `2.0e-4` | 100 | 50 | `2e-8` | `19.71` | `2.79` | `-16.91` | - | - |
+| `2.0e-4` | 100 | 100 | `2e-8` | `19.84` | `2.69` | `-17.18` | `0.01312333` | `5m56s` |
+
+### Notes
+
+- `2.0e-4` remains the recommended LR for the current
+  Qwen3.6-27B + DPO + LoRA + FSDP2 setup.
+- The validation surface is nearly saturated by 50 steps. More steps mainly
+  increase margin by pushing rejected log-probabilities lower, while chosen
+  rewards also drift down. This is normal for an easy/synthetic DPO preference
+  surface, but it means the next proof should be generation-side evaluation,
+  not only lower DPO loss.
+- The 100-step run used 8 NPUs, about 51.2 GiB HBM per NPU, and reported
+  `0.281` train steps/s.
+
 ## v0.4.0 - 2026-07-04
 
 Added the first ms-swift DPO LoRA/FSDP2 learning-rate search runner for

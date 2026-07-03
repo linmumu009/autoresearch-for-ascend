@@ -37,13 +37,13 @@ Default fixed settings:
 
 ## Current Result
 
-In the 40-step, 10% holdout search, `2.0e-4` is the current best LR:
+In the 40-step, 10% holdout search, `2.0e-4` was the best LR. A 100-step
+confirmation kept it stable:
 
-- eval_loss: `1.2e-7`
-- eval margin: `17.98`
-- train speed: `0.236` steps/s
-- HBM: about `51.85` GiB per NPU
+- eval_loss: `2e-8`
+- eval margin: `19.84`
+- train speed: `0.281` steps/s
+- HBM: about `51.19` GiB per NPU
 
 This is a short-budget preference-training result. It should be confirmed with
-a longer run and generation-side checks before being treated as final model
-quality evidence.
+generation-side checks before being treated as final model quality evidence.

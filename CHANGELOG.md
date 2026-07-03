@@ -1,5 +1,37 @@
 # Changelog
 
+## v0.3.13 - 2026-07-03
+
+Continued the 6-step LR boundary search at `1.2e-4` and tightened the runner's
+Ascend runtime library path handling.
+
+### Added
+
+- Added `framework_adapters/mindspeed_llm/candidates/lr_1p2em4_6step.env`.
+
+### Changed
+
+- `run_autoresearch_candidate.sh` now uses a minimal verified Ascend runtime
+  `LD_LIBRARY_PATH` when the CANN aarch64 runtime directory exists. This avoids
+  inheriting incompatible `ascend-toolkit/latest` library entries during plain
+  `docker exec` launches.
+
+### Results
+
+| Candidate | LR | Steps | Raw HF Val Loss | MindSpeed Valid Loss | Last Train Loss |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| `lr_1p2em4_6step.env` | `1.2e-4` | 6 | `12.152827` | `0.431454` | `0.644243` |
+
+### Notes
+
+- `LR=1.2e-4` still improves the 6-step raw HF validation surface.
+- MindSpeed-local validation and train loss keep rising, so the short-budget
+  search should continue only as a boundary bracket before longer confirmation.
+- Compared with runner baseline raw HF val_loss `14.962966`, the current best
+  candidate improved by `2.810139`.
+- Compared with base Qwen3-0.6B raw HF val_loss `14.977717`, the current best
+  candidate improved by `2.824890`.
+
 ## v0.3.12 - 2026-07-03
 
 Continued the 6-step LR boundary search at `1.1e-4` and hardened the runner's

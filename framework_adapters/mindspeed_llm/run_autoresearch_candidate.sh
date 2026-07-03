@@ -3,9 +3,10 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-ASCEND_AARCH64_LIB="${ASCEND_AARCH64_LIB:-/usr/local/Ascend/cann-9.0.0/aarch64-linux/lib64}"
+ASCEND_RUNTIME_LD="${ASCEND_RUNTIME_LD:-/usr/local/Ascend/cann-9.0.0/aarch64-linux/lib64:/usr/local/Ascend/cann-9.0.0/lib64:/usr/local/Ascend/driver/lib64:/usr/local/Ascend/driver/lib64/common:/usr/local/Ascend/driver/lib64/driver}"
+ASCEND_AARCH64_LIB="${ASCEND_RUNTIME_LD%%:*}"
 if [[ -d "${ASCEND_AARCH64_LIB}" ]]; then
-  export LD_LIBRARY_PATH="${ASCEND_AARCH64_LIB}:${LD_LIBRARY_PATH:-}"
+  export LD_LIBRARY_PATH="${ASCEND_RUNTIME_LD}"
 fi
 
 if [[ -n "${CANDIDATE_ENV:-}" ]]; then

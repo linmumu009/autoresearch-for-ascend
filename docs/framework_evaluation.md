@@ -20,7 +20,7 @@ our Ascend 910C environment. The scoring lens is intentionally practical:
 | Framework | Status | Efficiency Signal | Effect Signal | Notes |
 | --- | --- | --- | --- | --- |
 | HF + `torch_npu` thin loop | Runs | 5-minute budget completes on one NPU; about 4.6 GB HBM in observed runs. | Best val_loss `6.127654`. | This is the working baseline and the simplest autoresearch loop. |
-| MindSpeed-LLM | Runs | Deepscaler smoke steady steps around 0.18-0.25 s after warmup; about 10.3 GB allocated HBM. | Best observed converted checkpoint raw HF val_loss `13.097093` vs base `14.977717`. | Best fit for Qwen3-0.6B text SFT among the Ascend frameworks inspected so far. |
+| MindSpeed-LLM | Runs | Deepscaler smoke steady steps around 0.18-0.25 s after warmup; about 10.3 GB allocated HBM. | Best observed converted checkpoint raw HF val_loss `12.725430` vs base `14.977717`. | Best fit for Qwen3-0.6B text SFT among the Ascend frameworks inspected so far. |
 | MindSpeed-MM | Deferred | Not measured | Not measured | Useful Ascend reference, but less direct for pure text Qwen3-0.6B SFT. |
 
 ## MindSpeed-LLM Notes
@@ -193,12 +193,15 @@ while keeping the runner loop fixed:
 | `lr_2em5_6step` | `2.0e-5` | 13.792945 | 977686.773 | 0.310141 | 0.513032 |
 | `lr_3em5_6step` | `3.0e-5` | 13.120849 | 499243.503 | 0.305617 | 0.491179 |
 | `lr_2em5_12step` | `2.0e-5` | 13.097093 | 487523.225 | 0.293768 | 0.477166 |
+| `lr_3em5_12step` | `3.0e-5` | 12.725430 | 336189.379 | 0.307299 | 0.481535 |
+| `lr_4em5_6step` | `4.0e-5` | 12.786428 | 357334.816 | 0.315171 | 0.509350 |
 
 Interpretation: lower LR was worse, and higher LR helped under this tiny 6-step
-budget. The 6-step gain continued through `3.0e-5`, so the 6-step over-shoot
-boundary is still above that point. Separately, `2.0e-5` also improved when
-extended to 12 steps, becoming the best observed candidate overall. The next
-choice is to compare `3.0e-5` and `2.0e-5` under the same longer budget.
+budget. The 6-step gain continued through `4.0e-5`, so the 6-step over-shoot
+boundary is still above that point. Under the same 12-step budget, `3.0e-5`
+beats `2.0e-5` on raw HF validation loss, becoming the best observed candidate
+overall. The next choice is to verify `4.0e-5` under the same 12-step budget or
+probe `5.0e-5` on the shorter 6-step boundary run.
 
 ## 5-Minute Budget
 

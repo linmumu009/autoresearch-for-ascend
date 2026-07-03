@@ -120,6 +120,8 @@ Initial search candidates:
 | `lr_2em5_6step.env` | `2.0e-5` | Higher over-shoot boundary probe. |
 | `lr_3em5_6step.env` | `3.0e-5` | Continue probing the 6-step over-shoot boundary. |
 | `lr_2em5_12step.env` | `2.0e-5` | Verify the current best LR on a longer 12-step budget. |
+| `lr_3em5_12step.env` | `3.0e-5` | Compare 3.0e-5 and 2.0e-5 under the same 12-step budget. |
+| `lr_4em5_6step.env` | `4.0e-5` | Continue probing the 6-step over-shoot boundary. |
 
 LR search results:
 
@@ -135,5 +137,7 @@ LR search results:
 | `lr_2em5_6step.env` | 13.792945 | 0.310141 |
 | `lr_3em5_6step.env` | 13.120849 | 0.305617 |
 | `lr_2em5_12step.env` | 13.097093 | 0.293768 |
+| `lr_3em5_12step.env` | 12.725430 | 0.307299 |
+| `lr_4em5_6step.env` | 12.786428 | 0.315171 |
 
-Current observed best: `lr_2em5_12step.env`.
+Current observed best: `lr_3em5_12step.env`.

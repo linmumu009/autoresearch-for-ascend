@@ -1,5 +1,37 @@
 # Changelog
 
+## v0.3.3 - 2026-07-03
+
+Added bilingual README support and extended the MindSpeed-LLM LR boundary
+search.
+
+### Added
+
+- Added `README.zh-CN.md` and language links between English and Chinese
+  README files.
+- Added `framework_adapters/mindspeed_llm/candidates/lr_1p5em5_6step.env`.
+- Added `framework_adapters/mindspeed_llm/candidates/lr_2em5_6step.env`.
+
+### Results
+
+Both candidates used the same 6-step runner loop, deepscaler-derived SFT data,
+MCore-to-HF conversion, and fixed raw HF validation.
+
+| Candidate | LR | Raw HF Val Loss | MindSpeed Valid Loss | Last Train Loss |
+| --- | ---: | ---: | ---: | ---: |
+| `lr_1p5em5_6step.env` | `1.5e-5` | `14.061219` | `0.329362` | `0.547393` |
+| `lr_2em5_6step.env` | `2.0e-5` | `13.792945` | `0.310141` | `0.513032` |
+
+### Notes
+
+- `LR=2.0e-5` is the current best 6-step MindSpeed candidate.
+- Compared with the runner baseline raw HF val_loss `14.962966`, the best
+  candidate improved by `1.170021`.
+- Compared with base Qwen3-0.6B raw HF val_loss `14.977717`, the best
+  candidate improved by `1.184772`.
+- Since the loss still improved at `2.0e-5`, the over-shoot boundary is still
+  above this point for the current tiny 6-step budget.
+
 ## v0.3.2 - 2026-07-03
 
 Extended the MindSpeed-LLM LR range search.

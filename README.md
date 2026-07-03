@@ -1,5 +1,7 @@
 # autoresearch-for-ascend
 
+[English](README.md) | [中文](README.zh-CN.md)
+
 Ascend/NPU adaptation of Andrej Karpathy's `autoresearch` idea.
 
 This repository keeps the core autoresearch loop:
@@ -63,6 +65,7 @@ is writable, model directories are read-only, and only one NPU device is exposed
 
 | Version | Date | Summary |
 | --- | --- | --- |
+| v0.3.3 | 2026-07-03 | Added Chinese README and extended the MindSpeed-LLM LR boundary search to `2.0e-5`; new best raw HF val_loss is `13.792945`. |
 | v0.3.2 | 2026-07-03 | Extended the MindSpeed-LLM LR search to `7.5e-6` and `1.0e-5`; new best raw HF val_loss is `14.503275`. |
 | v0.3.1 | 2026-07-03 | Added first MindSpeed-LLM LR search candidates and recorded `5.0e-6` as best 6-step result. |
 | v0.3.0 | 2026-07-03 | Added and validated MindSpeed-LLM autoresearch candidate runner with train-convert-evaluate-record loop. |
@@ -114,7 +117,7 @@ the baseline in the 5-minute exploration budget.
 | Framework | Can run? | Efficiency | Effect |
 | --- | --- | --- | --- |
 | HF + torch_npu thin loop | Yes | 5-minute budget completes; best smoke used about 4.6 GB HBM on one visible NPU. | Best observed val_loss: `6.127654`. |
-| MindSpeed-LLM | Yes, autoresearch runner completed train -> convert -> HF eval -> TSV record. | Deepscaler smoke steady steps around 0.18-0.25 s after warmup; about 10.3 GB allocated HBM. | Extended LR search best raw HF val_loss `14.503275` at `LR=1.0e-5`; base Qwen3 raw HF val_loss `14.977717`. |
+| MindSpeed-LLM | Yes, autoresearch runner completed train -> convert -> HF eval -> TSV record. | Deepscaler smoke steady steps around 0.18-0.25 s after warmup; about 10.3 GB allocated HBM. | LR boundary search best raw HF val_loss `13.792945` at `LR=2.0e-5`; base Qwen3 raw HF val_loss `14.977717`. |
 | MindSpeed-MM | Not selected for the first Qwen3-0.6B text-only path. | Not measured. | Not measured. |
 
 See [docs/framework_evaluation.md](docs/framework_evaluation.md) for the running
@@ -133,7 +136,7 @@ It trains a MindSpeed candidate, converts the checkpoint to Hugging Face format,
 evaluates it with the fixed raw HF validation script, and appends metrics to
 `/workspace/runs/mindspeed_llm/results.tsv`.
 
-First runner baseline result:
+Current MindSpeed candidate results:
 
 | Run | Raw HF Val Loss | MindSpeed Valid Loss | Last Train Loss |
 | --- | ---: | ---: | ---: |
@@ -143,7 +146,9 @@ First runner baseline result:
 | `mindspeed_qwen3_0p6_lr_higher_6step` | 14.819130 | 0.532507 | 0.772222 |
 | `mindspeed_qwen3_0p6_lr_7p5em6_6step` | 14.622040 | 0.448289 | 0.693946 |
 | `mindspeed_qwen3_0p6_lr_1em5_6step` | 14.503275 | 0.408763 | 0.643258 |
+| `mindspeed_qwen3_0p6_lr_1p5em5_6step` | 14.061219 | 0.329362 | 0.547393 |
+| `mindspeed_qwen3_0p6_lr_2em5_6step` | 13.792945 | 0.310141 | 0.513032 |
 
-Current MindSpeed best: `lr_1em5_6step.env`. It improved the runner baseline
-raw HF validation loss by `0.459691` and the base Qwen3-0.6B raw HF validation
-loss by `0.474442` under the same fixed evaluation script.
+Current MindSpeed best: `lr_2em5_6step.env`. It improved the runner baseline
+raw HF validation loss by `1.170021` and the base Qwen3-0.6B raw HF validation
+loss by `1.184772` under the same fixed evaluation script.

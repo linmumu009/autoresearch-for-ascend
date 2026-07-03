@@ -116,8 +116,10 @@ Initial search candidates:
 | `lr_higher_6step.env` | `5.0e-6` | Check whether the first high-LR gain continues or over-shoots. |
 | `lr_7p5em6_6step.env` | `7.5e-6` | Probe whether the higher-LR gain continues. |
 | `lr_1em5_6step.env` | `1.0e-5` | Upper LR probe before moving to longer budgets. |
+| `lr_1p5em5_6step.env` | `1.5e-5` | Probe the over-shoot boundary above the current best. |
+| `lr_2em5_6step.env` | `2.0e-5` | Higher over-shoot boundary probe. |
 
-First LR search result:
+LR search results:
 
 | Candidate | Raw HF Val Loss | MindSpeed Valid Loss |
 | --- | ---: | ---: |
@@ -127,5 +129,7 @@ First LR search result:
 | `lr_higher_6step.env` | 14.819130 | 0.532507 |
 | `lr_7p5em6_6step.env` | 14.622040 | 0.448289 |
 | `lr_1em5_6step.env` | 14.503275 | 0.408763 |
+| `lr_1p5em5_6step.env` | 14.061219 | 0.329362 |
+| `lr_2em5_6step.env` | 13.792945 | 0.310141 |
 
-Current best: `lr_1em5_6step.env`.
+Current best: `lr_2em5_6step.env`.

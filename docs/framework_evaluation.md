@@ -20,7 +20,7 @@ our Ascend 910C environment. The scoring lens is intentionally practical:
 | Framework | Status | Efficiency Signal | Effect Signal | Notes |
 | --- | --- | --- | --- | --- |
 | HF + `torch_npu` thin loop | Runs | 5-minute budget completes on one NPU; about 4.6 GB HBM in observed runs. | Best val_loss `6.127654`. | This is the working baseline and the simplest autoresearch loop. |
-| MindSpeed-LLM | Runs | Deepscaler smoke steady steps around 0.18-0.25 s after warmup; about 10.3 GB allocated HBM. | Best 6-step converted checkpoint raw HF val_loss `14.503275` vs base `14.977717`. | Best fit for Qwen3-0.6B text SFT among the Ascend frameworks inspected so far. |
+| MindSpeed-LLM | Runs | Deepscaler smoke steady steps around 0.18-0.25 s after warmup; about 10.3 GB allocated HBM. | Best 6-step converted checkpoint raw HF val_loss `13.792945` vs base `14.977717`. | Best fit for Qwen3-0.6B text SFT among the Ascend frameworks inspected so far. |
 | MindSpeed-MM | Deferred | Not measured | Not measured | Useful Ascend reference, but less direct for pure text Qwen3-0.6B SFT. |
 
 ## MindSpeed-LLM Notes
@@ -189,11 +189,14 @@ while keeping the runner loop fixed:
 | `lr_higher_6step` | `5.0e-6` | 14.819130 | 2728138.084 | 0.532507 | 0.772222 |
 | `lr_7p5em6_6step` | `7.5e-6` | 14.622040 | 2240120.089 | 0.448289 | 0.693946 |
 | `lr_1em5_6step` | `1.0e-5` | 14.503275 | 1989263.400 | 0.408763 | 0.643258 |
+| `lr_1p5em5_6step` | `1.5e-5` | 14.061219 | 1278526.649 | 0.329362 | 0.547393 |
+| `lr_2em5_6step` | `2.0e-5` | 13.792945 | 977686.773 | 0.310141 | 0.513032 |
 
 Interpretation: lower LR was worse, and higher LR helped under this tiny 6-step
-budget. The gain continued through `1.0e-5`, so the current best candidate is
-`lr_1em5_6step`. Before moving to longer budgets, the next sensible search is
-to find the over-shoot boundary above `1.0e-5`.
+budget. The gain continued through `2.0e-5`, so the current best candidate is
+`lr_2em5_6step`. The over-shoot boundary is still above `2.0e-5` for this tiny
+6-step setting. The next choice is either to probe higher LR cautiously or to
+verify `2.0e-5` on a longer budget.
 
 ## 5-Minute Budget
 

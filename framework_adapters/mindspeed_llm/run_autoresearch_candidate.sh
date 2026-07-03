@@ -3,6 +3,11 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
+ASCEND_AARCH64_LIB="${ASCEND_AARCH64_LIB:-/usr/local/Ascend/cann-9.0.0/aarch64-linux/lib64}"
+if [[ -d "${ASCEND_AARCH64_LIB}" ]]; then
+  export LD_LIBRARY_PATH="${ASCEND_AARCH64_LIB}:${LD_LIBRARY_PATH:-}"
+fi
+
 if [[ -n "${CANDIDATE_ENV:-}" ]]; then
   set -a
   # shellcheck source=/dev/null

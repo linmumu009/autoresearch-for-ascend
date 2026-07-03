@@ -65,6 +65,7 @@ is writable, model directories are read-only, and only one NPU device is exposed
 
 | Version | Date | Summary |
 | --- | --- | --- |
+| v0.3.12 | 2026-07-03 | Probed `1.1e-4` on the 6-step boundary and made the runner prefer the CANN aarch64 runtime path; new best raw HF val_loss is `12.271653`. |
 | v0.3.11 | 2026-07-03 | Probed `1.0e-4` on the 6-step boundary; new best raw HF val_loss is `12.381389`. |
 | v0.3.10 | 2026-07-03 | Probed `9.0e-5` on the 6-step boundary; new best raw HF val_loss is `12.420206`. |
 | v0.3.9 | 2026-07-03 | Probed `8.0e-5` on the 6-step boundary; new best raw HF val_loss is `12.434883`. |
@@ -125,7 +126,7 @@ the baseline in the 5-minute exploration budget.
 | Framework | Can run? | Efficiency | Effect |
 | --- | --- | --- | --- |
 | HF + torch_npu thin loop | Yes | 5-minute budget completes; best smoke used about 4.6 GB HBM on one visible NPU. | Best observed val_loss: `6.127654`. |
-| MindSpeed-LLM | Yes, autoresearch runner completed train -> convert -> HF eval -> TSV record. | Deepscaler smoke steady steps around 0.18-0.25 s after warmup; about 10.3 GB allocated HBM. | Best observed raw HF val_loss `12.381389` at `LR=1.0e-4`, 6 steps; base Qwen3 raw HF val_loss `14.977717`. |
+| MindSpeed-LLM | Yes, autoresearch runner completed train -> convert -> HF eval -> TSV record. | Deepscaler smoke steady steps around 0.18-0.25 s after warmup; about 10.3 GB allocated HBM. | Best observed raw HF val_loss `12.271653` at `LR=1.1e-4`, 6 steps; base Qwen3 raw HF val_loss `14.977717`. |
 | MindSpeed-MM | Not selected for the first Qwen3-0.6B text-only path. | Not measured. | Not measured. |
 
 See [docs/framework_evaluation.md](docs/framework_evaluation.md) for the running
@@ -169,7 +170,8 @@ Current MindSpeed candidate results:
 | `mindspeed_qwen3_0p6_lr_8em5_6step` | 12.434883 | 0.372704 | 0.590512 |
 | `mindspeed_qwen3_0p6_lr_9em5_6step` | 12.420206 | 0.381243 | 0.601568 |
 | `mindspeed_qwen3_0p6_lr_1em4_6step` | 12.381389 | 0.394805 | 0.612619 |
+| `mindspeed_qwen3_0p6_lr_1p1em4_6step` | 12.271653 | 0.411056 | 0.626973 |
 
-Current observed MindSpeed best: `lr_1em4_6step.env`. It improved the runner
-baseline raw HF validation loss by `2.581577` and the base Qwen3-0.6B raw HF
-validation loss by `2.596328` under the same fixed evaluation script.
+Current observed MindSpeed best: `lr_1p1em4_6step.env`. It improved the runner
+baseline raw HF validation loss by `2.691313` and the base Qwen3-0.6B raw HF
+validation loss by `2.706064` under the same fixed evaluation script.

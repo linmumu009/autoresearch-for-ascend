@@ -131,6 +131,7 @@ Initial search candidates:
 | `lr_8em5_6step.env` | `8.0e-5` | Probe whether the 6-step boundary starts to over-shoot. |
 | `lr_9em5_6step.env` | `9.0e-5` | Probe whether the 6-step boundary over-shoots above 8.0e-5. |
 | `lr_1em4_6step.env` | `1.0e-4` | Probe whether the 6-step boundary over-shoots above 9.0e-5. |
+| `lr_1p1em4_6step.env` | `1.1e-4` | Probe whether the 6-step boundary over-shoots above 1.0e-4. |
 
 LR search results:
 
@@ -157,5 +158,6 @@ LR search results:
 | `lr_8em5_6step.env` | 12.434883 | 0.372704 |
 | `lr_9em5_6step.env` | 12.420206 | 0.381243 |
 | `lr_1em4_6step.env` | 12.381389 | 0.394805 |
+| `lr_1p1em4_6step.env` | 12.271653 | 0.411056 |
 
-Current observed best: `lr_1em4_6step.env`.
+Current observed best: `lr_1p1em4_6step.env`.

@@ -62,6 +62,7 @@ NPU 设备，避免影响物理机和其他容器。
 
 | 版本 | 日期 | 摘要 |
 | --- | --- | --- |
+| v0.3.4 | 2026-07-03 | 新增 `3.0e-5` 6-step 学习率探测和 `2.0e-5` 12-step 验证；当前最佳 raw HF val_loss 是 `13.097093`。 |
 | v0.3.3 | 2026-07-03 | 新增中文 README，并把 MindSpeed-LLM 学习率边界搜索扩展到 `2.0e-5`；新的最佳 raw HF val_loss 是 `13.792945`。 |
 | v0.3.2 | 2026-07-03 | 把 MindSpeed-LLM 学习率搜索扩展到 `7.5e-6` 和 `1.0e-5`；最佳 raw HF val_loss 更新为 `14.503275`。 |
 | v0.3.1 | 2026-07-03 | 加入第一轮 MindSpeed-LLM 学习率搜索候选，并记录 `5.0e-6` 为当时最佳 6-step 结果。 |
@@ -114,7 +115,7 @@ validation loss 约改善 4.42%。
 | 框架 | 能否跑通 | 效率 | 效果 |
 | --- | --- | --- | --- |
 | HF + torch_npu thin loop | 能 | 5 分钟预算可完成；观测到单 NPU 约 4.6 GB HBM。 | 最佳 val_loss：`6.127654`。 |
-| MindSpeed-LLM | 能，已经跑通 train -> convert -> HF eval -> TSV record。 | Deepscaler smoke 热身后单步约 0.18-0.25 s；分配 HBM 约 10.3 GB。 | 学习率边界搜索当前最佳 raw HF val_loss 为 `13.792945`，对应 `LR=2.0e-5`；base Qwen3 raw HF val_loss 为 `14.977717`。 |
+| MindSpeed-LLM | 能，已经跑通 train -> convert -> HF eval -> TSV record。 | Deepscaler smoke 热身后单步约 0.18-0.25 s；分配 HBM 约 10.3 GB。 | 当前最佳 raw HF val_loss 为 `13.097093`，对应 `LR=2.0e-5`、12 steps；base Qwen3 raw HF val_loss 为 `14.977717`。 |
 | MindSpeed-MM | 暂未作为 Qwen3-0.6B 纯文本路径首选。 | 未测。 | 未测。 |
 
 持续评估记录见 [docs/framework_evaluation.md](docs/framework_evaluation.md)。
@@ -143,7 +144,9 @@ CANDIDATE_ENV=/workspace/framework_adapters/mindspeed_llm/candidates/baseline_6s
 | `mindspeed_qwen3_0p6_lr_1em5_6step` | 14.503275 | 0.408763 | 0.643258 |
 | `mindspeed_qwen3_0p6_lr_1p5em5_6step` | 14.061219 | 0.329362 | 0.547393 |
 | `mindspeed_qwen3_0p6_lr_2em5_6step` | 13.792945 | 0.310141 | 0.513032 |
+| `mindspeed_qwen3_0p6_lr_3em5_6step` | 13.120849 | 0.305617 | 0.491179 |
+| `mindspeed_qwen3_0p6_lr_2em5_12step` | 13.097093 | 0.293768 | 0.477166 |
 
-当前 MindSpeed 最佳：`lr_2em5_6step.env`。在同一个固定 HF 验证脚本下，它相比
-runner baseline 的 raw HF validation loss 改善 `1.170021`，相比 base Qwen3-0.6B
-改善 `1.184772`。
+当前观测到的 MindSpeed 最佳：`lr_2em5_12step.env`。在同一个固定 HF 验证脚本下，
+它相比 runner baseline 的 raw HF validation loss 改善 `1.865873`，相比 base
+Qwen3-0.6B 改善 `1.880624`。

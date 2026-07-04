@@ -1,5 +1,42 @@
 # Changelog
 
+## v0.4.7 - 2026-07-04
+
+Trained and saved `1.0e-4` for 100 steps, then evaluated independent held-out
+scoring and greedy generation.
+
+### Results
+
+Training/eval:
+
+| LR | Steps | Eval Loss | Eval Chosen | Eval Rejected | Eval Margin | Train Loss | Runtime |
+| ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| `1.0e-4` | 100 | `1.7e-7` | `7.134` | `-10.35` | `17.48` | `0.017` | `6m14s` |
+
+Held-out pair scoring:
+
+| Run | Chosen | Rejected | Margin | Win Rate | Chosen Delta | Rejected Delta | Margin Delta |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| Base | `-4.4359` | `-5.6941` | `1.2583` | `93.75%` | - | - | - |
+| `1.0e-4` 50-step | `-4.3502` | `-6.6573` | `2.3070` | `100%` | `+0.0856` | `-0.9631` | `+1.0488` |
+| `1.0e-4` 100-step | `-4.4567` | `-6.9449` | `2.4882` | `100%` | `-0.0208` | `-1.2508` | `+1.2300` |
+| `2.0e-4` 50-step | `-5.4774` | `-8.7944` | `3.3171` | `100%` | `-1.0415` | `-3.1003` | `+2.0588` |
+
+Generation:
+
+| Adapter | Prompt Set | Decoding | Rows | Changed Outputs |
+| --- | --- | --- | ---: | ---: |
+| `1.0e-4` 100-step | held-out prompts v1 | greedy, `temperature=0` | 32 | 0 |
+
+### Notes
+
+- `1.0e-4` 100-step has higher margin than `1.0e-4` 50-step, but its mean
+  chosen delta is slightly negative.
+- It remains more balanced than `2.0e-4`, but `1.0e-4` 50-step is the only
+  saved adapter that improved average chosen logprob.
+- Greedy output equality remains: DPO pair scores move, short/open greedy text
+  still does not.
+
 ## v0.4.6 - 2026-07-04
 
 Compared saved `1.0e-4`, `1.5e-4`, and `2.0e-4` adapters on the independent

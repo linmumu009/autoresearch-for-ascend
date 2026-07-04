@@ -84,11 +84,15 @@ All pair margins improved in both train-distribution slices and in held-out v1.
 On held-out v1, the improvement mostly comes from lowering rejected logprob;
 chosen logprob improved on only 4 of 64 rows.
 
+The `1.0e-4` 100-step adapter continued improving pair margins but still did
+not move greedy generation on 32 held-out prompts.
+
 The held-out LR comparison makes the recommendation goal-dependent:
 
 | LR | Mean Margin | Win Rate | Chosen Delta | Interpretation |
 | --- | ---: | ---: | ---: | --- |
-| `1.0e-4` | `2.3070` | `100%` | `+0.0856` | Balanced held-out adapter. |
+| `1.0e-4` 50-step | `2.3070` | `100%` | `+0.0856` | Balanced held-out adapter. |
+| `1.0e-4` 100-step | `2.4882` | `100%` | `-0.0208` | More margin, chosen roughly flat/slightly down. |
 | `1.5e-4` | `2.7853` | `100%` | `-0.5162` | Middle ground, more rejected suppression. |
 | `2.0e-4` | `3.3171` | `100%` | `-1.0415` | Maximum margin, most aggressive rejected suppression. |
 

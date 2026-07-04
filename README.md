@@ -66,6 +66,7 @@ is writable, model directories are read-only, and only one NPU device is exposed
 
 | Version | Date | Summary |
 | --- | --- | --- |
+| v0.4.7 | 2026-07-04 | Trained and saved `1.0e-4` for 100 steps, then checked held-out scoring and generation; margin improved further, but 32 greedy generations still matched base exactly. |
 | v0.4.6 | 2026-07-04 | Compared saved `1.0e-4`, `1.5e-4`, and `2.0e-4` adapters on independent held-out pairs; `2.0e-4` maximizes margin, while `1.0e-4` is the more balanced LR. |
 | v0.4.5 | 2026-07-04 | Added an independently authored 64-row held-out DPO set; `2.0e-4` adapter improved all margins and raised win_rate to 100%, mostly by lowering rejected logprob. |
 | v0.4.4 | 2026-07-04 | Added offset-based DPO pair scoring and confirmed the `2.0e-4` adapter on rows 384-447: mean margin `0.697 -> 6.932`, win_rate `79.69% -> 100%`. |
@@ -141,7 +142,7 @@ the baseline in the 5-minute exploration budget.
 | --- | --- | --- | --- |
 | HF + torch_npu thin loop | Yes | 5-minute budget completes; best smoke used about 4.6 GB HBM on one visible NPU. | Best observed val_loss: `6.127654`. |
 | MindSpeed-LLM | Yes, autoresearch runner completed train -> convert -> HF eval -> TSV record. | Deepscaler smoke steady steps around 0.18-0.25 s after warmup; about 10.3 GB allocated HBM. | Best observed raw HF val_loss `11.678953` at `LR=2.0e-4`, 6 steps; base Qwen3 raw HF val_loss `14.977717`. |
-| ms-swift DPO LoRA/FSDP2 | Yes, Qwen3.6-27B DPO + LoRA + FSDP2 runs. | 8 NPUs; 50-step adapter save runs take about 3m20s, with about 51.2 GiB HBM per NPU. | LR recommendation is now goal-dependent: `2.0e-4` maximizes DPO margin, while `1.0e-4` is the balanced held-out choice because it reaches 100% win_rate and slightly improves chosen logprob. |
+| ms-swift DPO LoRA/FSDP2 | Yes, Qwen3.6-27B DPO + LoRA + FSDP2 runs. | 8 NPUs; 50-step adapter save runs take about 3m20s, 100-step save runs about 6m14s, with about 51.2 GiB HBM per NPU. | LR recommendation is goal-dependent: `2.0e-4` maximizes DPO margin; `1.0e-4` is the balanced 50-step held-out choice. Extending `1.0e-4` to 100 steps increases margin but no longer improves chosen logprob, and greedy generation remains unchanged. |
 | MindSpeed-MM | Not selected for the first Qwen3-0.6B text-only path. | Not measured. | Not measured. |
 
 See [docs/framework_evaluation.md](docs/framework_evaluation.md) for the running

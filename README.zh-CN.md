@@ -63,6 +63,7 @@ NPU 设备，避免影响物理机和其他容器。
 
 | 版本 | 日期 | 摘要 |
 | --- | --- | --- |
+| v0.4.3 | 2026-07-04 | 新增 DPO chosen/rejected logprob scorer；保存的 `2.0e-4` adapter 在 64/64 条样本上提升 pair margin，win_rate 从 81.25% 到 100%。 |
 | v0.4.2 | 2026-07-04 | 保存 `2.0e-4` LoRA adapter checkpoint，并做 base-vs-adapter 生成检查；DPO 指标改善明显，但 16 条短 prompt 生成文本完全相同。 |
 | v0.4.1 | 2026-07-04 | 用 100-step holdout 确认 ms-swift DPO 的 `2.0e-4` 学习率：eval_loss `2e-8`，eval margin `19.84`。 |
 | v0.4.0 | 2026-07-04 | 新增 ms-swift DPO LoRA/FSDP2 学习率搜索 runner，并在 Qwen3.6-27B 的 40-step holdout 实验中暂定 `2.0e-4` 为当前最佳。 |
@@ -134,7 +135,7 @@ validation loss 约改善 4.42%。
 | --- | --- | --- | --- |
 | HF + torch_npu thin loop | 能 | 5 分钟预算可完成；观测到单 NPU 约 4.6 GB HBM。 | 最佳 val_loss：`6.127654`。 |
 | MindSpeed-LLM | 能，已经跑通 train -> convert -> HF eval -> TSV record。 | Deepscaler smoke 热身后单步约 0.18-0.25 s；分配 HBM 约 10.3 GB。 | 当前最佳 raw HF val_loss 为 `11.678953`，对应 `LR=2.0e-4`、6 steps；base Qwen3 raw HF val_loss 为 `14.977717`。 |
-| ms-swift DPO LoRA/FSDP2 | 能，已经跑通 Qwen3.6-27B DPO + LoRA + FSDP2。 | 8 NPU；100-step + 10% eval 确认用时 5m56s，训练速度约 0.281 steps/s，单卡 HBM 约 51.2 GiB。50-step 训练已保存可加载 LoRA checkpoint。 | 推荐 LR 是 `2.0e-4`：100-step eval_loss `2e-8`，eval margin `19.84`。生成侧 smoke 暂未看到正向变化：16 条短 prompt 与 base 输出完全相同。 |
+| ms-swift DPO LoRA/FSDP2 | 能，已经跑通 Qwen3.6-27B DPO + LoRA + FSDP2。 | 8 NPU；100-step + 10% eval 确认用时 5m56s，训练速度约 0.281 steps/s，单卡 HBM 约 51.2 GiB。50-step 训练已保存可加载 LoRA checkpoint。 | 推荐 LR 是 `2.0e-4`：100-step eval_loss `2e-8`，eval margin `19.84`。短文本生成暂不变，但 pair scoring 为正：64 条 DPO pair 的 mean margin `0.695 -> 6.955`，win_rate `81.25% -> 100%`。 |
 | MindSpeed-MM | 暂未作为 Qwen3-0.6B 纯文本路径首选。 | 未测。 | 未测。 |
 
 持续评估记录见 [docs/framework_evaluation.md](docs/framework_evaluation.md)。

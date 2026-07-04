@@ -1,5 +1,43 @@
 # Changelog
 
+## v0.4.3 - 2026-07-04
+
+Added a DPO chosen/rejected pair scorer and verified that the saved `2.0e-4`
+adapter changes the preference/logprob surface even though short generation
+strings stayed identical.
+
+### Added
+
+- Added `framework_adapters/ms_swift_dpo/score_dpo_pairs.py`.
+
+### Results
+
+The scorer evaluated the first 64 rows of `ops_dpo_512.jsonl`. Each row was
+scored as average response-token log-probability for the chosen and rejected
+answers, with margin defined as `chosen_mean_logprob - rejected_mean_logprob`.
+
+| Model | Rows | Mean Chosen Logprob | Mean Rejected Logprob | Mean Margin | Win Rate |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| Base Qwen3.6-27B | 64 | `-4.0987` | `-4.7941` | `0.6954` | `81.25%` |
+| `2.0e-4` LoRA checkpoint-50 | 64 | `-2.7799` | `-9.7350` | `6.9551` | `100%` |
+
+Per-row margin deltas:
+
+- improved rows: `64/64`
+- mean delta: `+6.2597`
+- median delta: `+6.2749`
+- minimum delta: `+4.1543`
+- maximum delta: `+8.6847`
+
+### Notes
+
+- This resolves the apparent mismatch from v0.4.2: short argmax generation did
+  not change, but the adapter strongly increases chosen-vs-rejected preference
+  margins.
+- The next useful check is a held-out pair scorer or a larger generation
+  benchmark, because the first 64 scored rows are still sampled from the same
+  synthetic DPO data distribution.
+
 ## v0.4.2 - 2026-07-04
 
 Saved a real `2.0e-4` LoRA adapter checkpoint and tested whether the DPO signal

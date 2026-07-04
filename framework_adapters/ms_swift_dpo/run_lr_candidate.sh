@@ -18,6 +18,8 @@ EVAL_STRATEGY="${EVAL_STRATEGY:-no}"
 EVAL_STEPS="${EVAL_STEPS:-50}"
 FSDP_CONFIG="${FSDP_CONFIG:-${WORKSPACE_DIR}/configs/fsdp2_full_state.json}"
 SAVE_STRATEGY="${SAVE_STRATEGY:-no}"
+SAVE_STEPS="${SAVE_STEPS:-500}"
+SAVE_TOTAL_LIMIT="${SAVE_TOTAL_LIMIT:-1}"
 
 mkdir -p "${OUTPUT_DIR}" "${LOG_DIR}"
 cd "${WORKSPACE_DIR}"
@@ -60,6 +62,8 @@ swift rlhf \
   --max_steps "${MAX_STEPS}" \
   --logging_steps 1 \
   --save_strategy "${SAVE_STRATEGY}" \
+  --save_steps "${SAVE_STEPS}" \
+  --save_total_limit "${SAVE_TOTAL_LIMIT}" \
   --eval_strategy "${EVAL_STRATEGY}" \
   --eval_steps "${EVAL_STEPS}" \
   --output_dir "${OUTPUT_DIR}" \

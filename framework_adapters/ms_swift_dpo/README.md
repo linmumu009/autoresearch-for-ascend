@@ -20,6 +20,21 @@ MASTER_PORT=29901 \
 bash scripts/run_ms_swift_lr_candidate.sh
 ```
 
+To save a usable adapter checkpoint:
+
+```bash
+RUN_ID=lr_2e-4_50step_save_eval10p \
+LEARNING_RATE=2e-4 \
+MAX_STEPS=50 \
+SPLIT_DATASET_RATIO=0.1 \
+EVAL_STRATEGY=steps \
+EVAL_STEPS=50 \
+SAVE_STRATEGY=steps \
+SAVE_STEPS=50 \
+SAVE_TOTAL_LIMIT=1 \
+bash scripts/run_ms_swift_lr_candidate.sh
+```
+
 Default fixed settings:
 
 - `rlhf_type=dpo`
@@ -45,5 +60,14 @@ confirmation kept it stable:
 - train speed: `0.281` steps/s
 - HBM: about `51.19` GiB per NPU
 
-This is a short-budget preference-training result. It should be confirmed with
-generation-side checks before being treated as final model quality evidence.
+A 50-step save run produced a usable LoRA checkpoint with eval_loss `5e-8` and
+eval margin `18.38`. The checkpoint loads as `PeftModelForCausalLM`, but it did
+not change short-form generation in the current smoke checks:
+
+- 2 fixed prompts, greedy decoding: 0 changed outputs
+- 16 ops prompts, greedy decoding: 0 changed outputs
+- 16 ops prompts, `temperature=0.7`: 0 changed outputs
+
+This is a short-budget preference-training result. The next check should use
+preference/logprob scoring or a larger generation benchmark before treating it
+as final model quality evidence.

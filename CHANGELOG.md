@@ -1,5 +1,49 @@
 # Changelog
 
+## v0.4.2 - 2026-07-04
+
+Saved a real `2.0e-4` LoRA adapter checkpoint and tested whether the DPO signal
+changes short-form generation outputs.
+
+### Changed
+
+- Exposed `SAVE_STEPS` and `SAVE_TOTAL_LIMIT` in
+  `framework_adapters/ms_swift_dpo/run_lr_candidate.sh`.
+
+### Results
+
+Adapter checkpoint:
+
+```text
+/workspace/llin-rl-dpo/outputs/ms-swift-qwen36-dpo-lrsearch/
+  lr_2e-4_50step_save_eval10p_20260704/
+    v0-20260704-010636/checkpoint-50/
+```
+
+Training/eval summary:
+
+| LR | Steps | Eval Loss | Eval Margin | Train Loss | Runtime |
+| ---: | ---: | ---: | ---: | ---: | ---: |
+| `2.0e-4` | 50 | `5e-8` | `18.38` | `0.02607` | `3m22s` |
+
+Generation checks:
+
+| Prompt Set | Decoding | Rows | Changed Outputs |
+| --- | --- | ---: | ---: |
+| fixed eval prompts | greedy, `temperature=0` | 2 | 0 |
+| ops prompts sampled from DPO data | greedy, `temperature=0` | 16 | 0 |
+| ops prompts sampled from DPO data | `temperature=0.7` | 16 | 0 |
+
+### Notes
+
+- The adapter is definitely loaded during inference; ms-swift reports
+  `PeftModelForCausalLM`.
+- DPO holdout metrics improved strongly, but this did not move the generated
+  text for the short prompt checks. The next evaluation should use either
+  preference/logprob scoring against chosen/rejected pairs or a larger,
+  task-specific generation benchmark where the expected behavior differs
+  materially from the base model.
+
 ## v0.4.1 - 2026-07-04
 
 Confirmed the current ms-swift DPO learning-rate winner with a longer

@@ -84,6 +84,14 @@ All pair margins improved in both train-distribution slices and in held-out v1.
 On held-out v1, the improvement mostly comes from lowering rejected logprob;
 chosen logprob improved on only 4 of 64 rows.
 
+The held-out LR comparison makes the recommendation goal-dependent:
+
+| LR | Mean Margin | Win Rate | Chosen Delta | Interpretation |
+| --- | ---: | ---: | ---: | --- |
+| `1.0e-4` | `2.3070` | `100%` | `+0.0856` | Balanced held-out adapter. |
+| `1.5e-4` | `2.7853` | `100%` | `-0.5162` | Middle ground, more rejected suppression. |
+| `2.0e-4` | `3.3171` | `100%` | `-1.0415` | Maximum margin, most aggressive rejected suppression. |
+
 This is a short-budget preference-training result. The next check should use
 preference/logprob scoring or a larger generation benchmark before treating it
 as final model quality evidence.

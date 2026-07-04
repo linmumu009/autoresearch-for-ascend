@@ -1,5 +1,39 @@
 # Changelog
 
+## v0.4.6 - 2026-07-04
+
+Compared saved `1.0e-4`, `1.5e-4`, and `2.0e-4` adapters on the independent
+held-out DPO set.
+
+### Results
+
+Held-out dataset: `ops_dpo_heldout_64_v1.jsonl`.
+
+| LR / Model | Mean Chosen Logprob | Mean Rejected Logprob | Mean Margin | Win Rate | Chosen Delta | Rejected Delta | Margin Delta |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| Base | `-4.4359` | `-5.6941` | `1.2583` | `93.75%` | - | - | - |
+| `1.0e-4` | `-4.3502` | `-6.6573` | `2.3070` | `100%` | `+0.0856` | `-0.9631` | `+1.0488` |
+| `1.5e-4` | `-4.9520` | `-7.7374` | `2.7853` | `100%` | `-0.5162` | `-2.0432` | `+1.5271` |
+| `2.0e-4` | `-5.4774` | `-8.7944` | `3.3171` | `100%` | `-1.0415` | `-3.1003` | `+2.0588` |
+
+Per-row counts:
+
+| LR | Margin Improved | Chosen Improved | Rejected Lowered |
+| --- | ---: | ---: | ---: |
+| `1.0e-4` | `64/64` | `35/64` | `63/64` |
+| `1.5e-4` | `64/64` | `10/64` | `64/64` |
+| `2.0e-4` | `64/64` | `4/64` | `64/64` |
+
+### Notes
+
+- `2.0e-4` remains the best LR if the objective is maximum DPO pair-margin
+  separation.
+- `1.0e-4` is the more balanced LR on the held-out set: it reaches `100%`
+  win_rate while slightly improving chosen logprob on average.
+- The current practical recommendation is therefore goal-dependent:
+  use `1.0e-4` for conservative adapter behavior, and `2.0e-4` for aggressive
+  rejected-response suppression.
+
 ## v0.4.5 - 2026-07-04
 
 Added an independently authored 64-row held-out DPO set and scored the saved

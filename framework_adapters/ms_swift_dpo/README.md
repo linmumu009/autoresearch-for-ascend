@@ -77,8 +77,12 @@ equality missed:
 | rows 0-63 | `2.0e-4` LoRA checkpoint-50 | `6.9551` | `100%` |
 | rows 384-447 | Base Qwen3.6-27B | `0.6972` | `79.69%` |
 | rows 384-447 | `2.0e-4` LoRA checkpoint-50 | `6.9319` | `100%` |
+| held-out v1 | Base Qwen3.6-27B | `1.2583` | `93.75%` |
+| held-out v1 | `2.0e-4` LoRA checkpoint-50 | `3.3171` | `100%` |
 
-All pair margins improved in both slices.
+All pair margins improved in both train-distribution slices and in held-out v1.
+On held-out v1, the improvement mostly comes from lowering rejected logprob;
+chosen logprob improved on only 4 of 64 rows.
 
 This is a short-budget preference-training result. The next check should use
 preference/logprob scoring or a larger generation benchmark before treating it
@@ -104,3 +108,12 @@ python scripts/score_dpo_pairs.py \
   --adapter-path /workspace/llin-rl-dpo/outputs/ms-swift-qwen36-dpo-lrsearch/lr_2e-4_50step_save_eval10p_20260704/v0-20260704-010636/checkpoint-50 \
   --output outputs/ms-swift-dpo-pair-score/adapter-2e-4-50step-ops64.json
 ```
+
+Build the independent held-out set:
+
+```bash
+python scripts/make_heldout_ops_dpo.py \
+  --output datasets/ops_dpo_heldout_64_v1.jsonl
+```
+
+Score the held-out set by passing `--dataset datasets/ops_dpo_heldout_64_v1.jsonl`.

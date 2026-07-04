@@ -1,5 +1,43 @@
 # Changelog
 
+## v0.4.5 - 2026-07-04
+
+Added an independently authored 64-row held-out DPO set and scored the saved
+`2.0e-4` adapter against it.
+
+### Added
+
+- Added `framework_adapters/ms_swift_dpo/make_heldout_ops_dpo.py`.
+
+### Results
+
+Held-out dataset: `ops_dpo_heldout_64_v1.jsonl`, generated from new operational
+topics and answer pairs rather than by slicing `ops_dpo_512.jsonl`.
+
+| Model | Rows | Mean Chosen Logprob | Mean Rejected Logprob | Mean Margin | Win Rate |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| Base Qwen3.6-27B | 64 | `-4.4359` | `-5.6941` | `1.2583` | `93.75%` |
+| `2.0e-4` LoRA checkpoint-50 | 64 | `-5.4774` | `-8.7944` | `3.3171` | `100%` |
+
+Per-row deltas:
+
+- margin improved rows: `64/64`
+- mean margin delta: `+2.0588`
+- median margin delta: `+1.8406`
+- minimum margin delta: `+0.5142`
+- maximum margin delta: `+4.0433`
+- chosen logprob improved rows: `4/64`
+- rejected logprob lowered rows: `64/64`
+
+### Notes
+
+- The held-out result is positive but qualitatively different from train-surface
+  scoring: the adapter mostly improves the margin by lowering rejected
+  logprob, while chosen logprob usually decreases.
+- This supports the current claim that the adapter learned a rejection
+  preference signal, but it is not yet evidence that it improves open-ended
+  generation quality.
+
 ## v0.4.4 - 2026-07-04
 
 Added offset-based DPO pair scoring and confirmed the saved `2.0e-4` adapter on

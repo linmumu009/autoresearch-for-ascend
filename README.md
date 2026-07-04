@@ -66,6 +66,7 @@ is writable, model directories are read-only, and only one NPU device is exposed
 
 | Version | Date | Summary |
 | --- | --- | --- |
+| v0.4.5 | 2026-07-04 | Added an independently authored 64-row held-out DPO set; `2.0e-4` adapter improved all margins and raised win_rate to 100%, mostly by lowering rejected logprob. |
 | v0.4.4 | 2026-07-04 | Added offset-based DPO pair scoring and confirmed the `2.0e-4` adapter on rows 384-447: mean margin `0.697 -> 6.932`, win_rate `79.69% -> 100%`. |
 | v0.4.3 | 2026-07-04 | Added a DPO chosen/rejected logprob scorer; the saved `2.0e-4` adapter improved 64/64 pair margins and raised win_rate from 81.25% to 100%. |
 | v0.4.2 | 2026-07-04 | Saved a `2.0e-4` LoRA adapter checkpoint and ran base-vs-adapter generation checks; DPO metrics improved, but 16 short prompts produced identical text. |
@@ -139,7 +140,7 @@ the baseline in the 5-minute exploration budget.
 | --- | --- | --- | --- |
 | HF + torch_npu thin loop | Yes | 5-minute budget completes; best smoke used about 4.6 GB HBM on one visible NPU. | Best observed val_loss: `6.127654`. |
 | MindSpeed-LLM | Yes, autoresearch runner completed train -> convert -> HF eval -> TSV record. | Deepscaler smoke steady steps around 0.18-0.25 s after warmup; about 10.3 GB allocated HBM. | Best observed raw HF val_loss `11.678953` at `LR=2.0e-4`, 6 steps; base Qwen3 raw HF val_loss `14.977717`. |
-| ms-swift DPO LoRA/FSDP2 | Yes, Qwen3.6-27B DPO + LoRA + FSDP2 runs. | 8 NPUs; the 100-step + 10% eval confirmation took 5m56s, with 0.281 train steps/s and about 51.2 GiB HBM per NPU. A 50-step run saved a usable LoRA checkpoint. | Recommended LR is `2.0e-4`: 100-step eval_loss `2e-8`, eval margin `19.84`. Short generation text is unchanged, but pair scoring is positive on two 64-row slices: mean margin `0.695 -> 6.955` and `0.697 -> 6.932`; both adapter win_rates reached `100%`. |
+| ms-swift DPO LoRA/FSDP2 | Yes, Qwen3.6-27B DPO + LoRA + FSDP2 runs. | 8 NPUs; the 100-step + 10% eval confirmation took 5m56s, with 0.281 train steps/s and about 51.2 GiB HBM per NPU. A 50-step run saved a usable LoRA checkpoint. | Recommended LR is `2.0e-4`: 100-step eval_loss `2e-8`, eval margin `19.84`. Pair scoring is positive on train-distribution slices and an independent held-out set; held-out margin improved `1.258 -> 3.317`, win_rate `93.75% -> 100%`, mostly by lowering rejected logprob. |
 | MindSpeed-MM | Not selected for the first Qwen3-0.6B text-only path. | Not measured. | Not measured. |
 
 See [docs/framework_evaluation.md](docs/framework_evaluation.md) for the running

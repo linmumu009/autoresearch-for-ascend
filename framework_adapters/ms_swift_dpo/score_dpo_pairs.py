@@ -22,10 +22,12 @@ def _configure_paths(swift_src: str) -> None:
         sys.path.insert(0, swift_src)
 
 
-def _load_jsonl(path: Path, limit: int) -> list[dict[str, Any]]:
+def _load_jsonl(path: Path, limit: int, offset: int) -> list[dict[str, Any]]:
     rows: list[dict[str, Any]] = []
     with path.open("r", encoding="utf-8") as handle:
-        for line in handle:
+        for line_index, line in enumerate(handle):
+            if line_index < offset:
+                continue
             if not line.strip():
                 continue
             rows.append(json.loads(line))
@@ -123,6 +125,7 @@ def main() -> None:
     parser.add_argument("--adapter-path", default="")
     parser.add_argument("--swift-src", default="/workspace/llin-rl-dpo/reference/ms-swift")
     parser.add_argument("--limit", type=int, default=32)
+    parser.add_argument("--offset", type=int, default=0)
     parser.add_argument("--output", required=True)
     args = parser.parse_args()
 
@@ -149,7 +152,8 @@ def main() -> None:
     model.eval()
 
     records: list[dict[str, Any]] = []
-    for index, row in enumerate(_load_jsonl(Path(args.dataset), args.limit)):
+    for relative_index, row in enumerate(_load_jsonl(Path(args.dataset), args.limit, args.offset)):
+        index = args.offset + relative_index
         context, chosen_text, rejected_text = _context_and_responses(row)
         chosen = _response_score(model, tokenizer, context, chosen_text)
         rejected = _response_score(model, tokenizer, context, rejected_text)
@@ -174,6 +178,7 @@ def main() -> None:
         "adapter_path": args.adapter_path,
         "dataset": args.dataset,
         "limit": args.limit,
+        "offset": args.offset,
         "summary": _summarize(records),
         "records": records,
     }

@@ -1,5 +1,39 @@
 # Changelog
 
+## v0.4.4 - 2026-07-04
+
+Added offset-based DPO pair scoring and confirmed the saved `2.0e-4` adapter on
+a later 64-row slice.
+
+### Changed
+
+- Added `--offset` to `framework_adapters/ms_swift_dpo/score_dpo_pairs.py`.
+
+### Results
+
+Rows 384-447 of `ops_dpo_512.jsonl`:
+
+| Model | Rows | Mean Chosen Logprob | Mean Rejected Logprob | Mean Margin | Win Rate |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| Base Qwen3.6-27B | 64 | `-4.1024` | `-4.7995` | `0.6972` | `79.69%` |
+| `2.0e-4` LoRA checkpoint-50 | 64 | `-2.7684` | `-9.7003` | `6.9319` | `100%` |
+
+Per-row margin deltas:
+
+- improved rows: `64/64`
+- mean delta: `+6.2347`
+- median delta: `+6.1226`
+- minimum delta: `+4.2000`
+- maximum delta: `+9.0185`
+
+### Notes
+
+- The later-slice result closely matches the v0.4.3 first-slice result, so the
+  positive pair-scoring signal is not just a local artifact of the first 64
+  rows.
+- The data is still from the same synthetic DPO distribution, so the next step
+  should use a separately generated or human-authored held-out set.
+
 ## v0.4.3 - 2026-07-04
 
 Added a DPO chosen/rejected pair scorer and verified that the saved `2.0e-4`

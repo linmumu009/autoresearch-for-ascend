@@ -69,14 +69,16 @@ not change short-form generation in the current smoke checks:
 - 16 ops prompts, `temperature=0.7`: 0 changed outputs
 
 The explicit DPO pair scorer gives the positive signal that generation text
-equality missed. On the first 64 DPO pairs:
+equality missed:
 
-| Model | Mean Margin | Win Rate |
-| --- | ---: | ---: |
-| Base Qwen3.6-27B | `0.6954` | `81.25%` |
-| `2.0e-4` LoRA checkpoint-50 | `6.9551` | `100%` |
+| Slice | Model | Mean Margin | Win Rate |
+| --- | --- | ---: | ---: |
+| rows 0-63 | Base Qwen3.6-27B | `0.6954` | `81.25%` |
+| rows 0-63 | `2.0e-4` LoRA checkpoint-50 | `6.9551` | `100%` |
+| rows 384-447 | Base Qwen3.6-27B | `0.6972` | `79.69%` |
+| rows 384-447 | `2.0e-4` LoRA checkpoint-50 | `6.9319` | `100%` |
 
-All 64 pair margins improved, with mean delta `+6.2597`.
+All pair margins improved in both slices.
 
 This is a short-budget preference-training result. The next check should use
 preference/logprob scoring or a larger generation benchmark before treating it
@@ -88,6 +90,7 @@ Run base scoring:
 
 ```bash
 python scripts/score_dpo_pairs.py \
+  --offset 0 \
   --limit 64 \
   --output outputs/ms-swift-dpo-pair-score/base-ops64.json
 ```
@@ -96,6 +99,7 @@ Run adapter scoring:
 
 ```bash
 python scripts/score_dpo_pairs.py \
+  --offset 0 \
   --limit 64 \
   --adapter-path /workspace/llin-rl-dpo/outputs/ms-swift-qwen36-dpo-lrsearch/lr_2e-4_50step_save_eval10p_20260704/v0-20260704-010636/checkpoint-50 \
   --output outputs/ms-swift-dpo-pair-score/adapter-2e-4-50step-ops64.json
